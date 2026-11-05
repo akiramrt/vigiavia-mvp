@@ -83,9 +83,11 @@ jobs:
         run: docker compose --profile observabilidade up -d --build --wait --wait-timeout 180
       - name: Verificar saúde e coleta de métricas
         run: |
-          curl -fsS http://localhost:8000/health
-          curl -fsS http://localhost:9090/-/ready
-          curl -fsS http://localhost:3000/api/health
+          # serviços sem HEALTHCHECK (Prometheus/Grafana) podem levar alguns segundos para aceitar conexões
+          R="--retry 15 --retry-delay 3 --retry-all-errors --max-time 10"
+          curl -fsS $R http://localhost:8000/health
+          curl -fsS $R http://localhost:9090/-/ready
+          curl -fsS $R http://localhost:3000/api/health
           for i in $(seq 1 12); do
             UP=$(curl -s 'http://localhost:9090/api/v1/query?query=up%7Bjob%3D%22vigiavia-local%22%7D' | python3 -c "import json,sys; r=json.load(sys.stdin)['data']['result']; print(r[0]['value'][1] if r else '0')")
             [ "$UP" = "1" ] && echo "Prometheus coletando a API (up=1)" && exit 0
