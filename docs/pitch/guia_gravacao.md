@@ -30,8 +30,11 @@ para um buraco de verdade até o alerta **“ATENÇÃO: BURACO À FRENTE”**, t
 **Opção B — no computador, com a barra de endereço visível** (Clipchamp → Gravar tela, ou `Win + Alt + R`):
 1. aba **Cidadão** → **Enviar foto ou vídeo** → `Downloads\pitch\video_rua_silvia_para_demo.webm`
    (buraco real na Rua Sílvia, Bela Vista — Daniel Fraga, [Wikimedia Commons](https://commons.wikimedia.org/wiki/File%3ABuraco_na_rua_S%C3%ADlvia%2C_276_%28Bela_Vista%29.webm), CC BY 3.0);
-2. mostre a detecção e o alerta e clique em **Enviar relato**;
-3. aba **Zeladoria**: o relato novo no mapa e na fila priorizada;
+2. mostre a detecção e o alerta e clique em **Enviar relato** (o botão libera no primeiro buraco detectado e continua
+   liberado). Com a coordenada que já vem preenchida, o relato cai sobre um buraco de demonstração e aparece
+   **“Buraco já registrado… confirmação adicionada”**: é a deduplicação do roteiro. Para criar um relato novo, mude a
+   longitude para `-46.652000` antes de enviar (evite “Usar minha localização” no vídeo: mostraria onde você está);
+3. aba **Zeladoria**: o relato no mapa e na fila priorizada;
 4. **valide** o relato (vira ordem de serviço).
 
 Salve como `wesley_demo.mp4`.

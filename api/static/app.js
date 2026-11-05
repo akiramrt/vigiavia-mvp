@@ -8,10 +8,13 @@ const ORT_URL = "https://cdn.jsdelivr.net/npm/onnxruntime-web@1.20.1/dist/ort.we
 const ORT_WASM = "https://cdn.jsdelivr.net/npm/onnxruntime-web@1.20.1/dist/";
 const ROTULO = { baixa: "BAIXA", media: "MÉDIA", alta: "ALTA" };
 const COR = { baixa: "#ffd400", media: "#ff8c00", alta: "#ff3b30" };
+const PESO_SEV = { baixa: 1, media: 2, alta: 3 };
 
 const st = {
   modelo: null, rodando: false, stream: null, deteccoes: [], ort: null, sessao: null,
   ultimaVoz: 0, fpsEma: 0, mapa: null, camadaMapa: null,
+  candidato: null,   // melhor detecção da fonte atual (com o recorte já feito): é o que o relato envia
+  geracao: 0,        // muda a cada troca de fonte; resultados atrasados da fonte anterior são descartados
 };
 const quadro = document.createElement("canvas");        // quadro limpo (detecção e recorte)
 const tela = $("#tela"), ctx = tela.getContext("2d");
@@ -183,7 +186,6 @@ function desenhar(dets) {
       <span class="chip ${d.severidade}">${ROTULO[d.severidade]}</span>`;
     lista.appendChild(li);
   });
-  $("#btn-relatar").disabled = dets.length === 0;
 }
 
 function prepararTela(w, h) {
@@ -192,10 +194,12 @@ function prepararTela(w, h) {
 }
 
 async function detectarQuadro() {
-  const t0 = performance.now();
+  const g = st.geracao, t0 = performance.now();
   const dets = $("#modo").value === "aparelho" ? await detectarAparelho() : await detectarServidor();
+  if (g !== st.geracao) return null;         // a fonte mudou durante a espera: resultado descartado
   st.deteccoes = dets;
   desenhar(dets);
+  guardarCandidato(dets);
   const fps = 1000 / (performance.now() - t0);
   st.fpsEma = st.fpsEma ? 0.85 * st.fpsEma + 0.15 * fps : fps;
   return dets;
@@ -203,25 +207,32 @@ async function detectarQuadro() {
 
 /* ------------------------------------------------------------------ câmera / vídeo / foto */
 async function laco() {
-  while (st.rodando) {
+  const g = st.geracao;
+  while (st.rodando && g === st.geracao) {
     if (video.readyState >= 2 && !video.ended) {
       if (quadro.width !== video.videoWidth) prepararTela(video.videoWidth, video.videoHeight);
       quadro.getContext("2d").drawImage(video, 0, 0);
-      try { const d = await detectarQuadro(); status(`${d.length} buraco(s) · ${st.fpsEma.toFixed(1)} FPS · ${$("#modo").value}`); }
-      catch (e) { status("Erro na detecção: " + e.message); await new Promise((r) => setTimeout(r, 800)); }
-    } else if (video.ended) { parar(); break; }
+      try {
+        const d = await detectarQuadro(); if (!d) break;
+        status(`${d.length} buraco(s) · ${st.fpsEma.toFixed(1)} FPS · ${$("#modo").value}`);
+      } catch (e) { status("Erro na detecção: " + e.message); await new Promise((r) => setTimeout(r, 800)); }
+    } else if (video.ended) {
+      parar();
+      status(st.candidato ? "Vídeo terminado. Buraco detectado: já dá para enviar o relato." : "Vídeo terminado. Nenhum buraco detectado.");
+      break;
+    }
     await new Promise((r) => requestAnimationFrame(r));
   }
 }
 function parar() {
-  st.rodando = false;
+  st.rodando = false; st.geracao++;
   st.stream?.getTracks().forEach((t) => t.stop()); st.stream = null;
   video.pause(); $("#btn-parar").hidden = true; $("#alerta").hidden = true;
 }
 $("#btn-parar").addEventListener("click", parar);
 $("#btn-camera").addEventListener("click", async () => {
   try {
-    parar();
+    parar(); limparCandidato();
     st.stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment", width: { ideal: 1280 } }, audio: false });
     video.srcObject = st.stream; video.hidden = false; await video.play();
     st.rodando = true; $("#btn-parar").hidden = false; laco();
@@ -232,7 +243,7 @@ $("#arquivo").addEventListener("change", async (ev) => {
   const f = ev.target.files[0];
   ev.target.value = "";                      // escolher o mesmo arquivo de novo também dispara "change"
   if (!f) return;
-  parar();
+  parar(); limparCandidato();
   const url = URL.createObjectURL(f);
   if (f.type.startsWith("video/") || (!f.type && EXT_VIDEO.test(f.name))) {
     status("Abrindo o vídeo…");
@@ -248,7 +259,7 @@ $("#arquivo").addEventListener("change", async (ev) => {
       prepararTela(img.naturalWidth, img.naturalHeight);
       quadro.getContext("2d").drawImage(img, 0, 0);
       status("Analisando…");
-      try { const d = await detectarQuadro(); status(`${d.length} buraco(s) detectado(s).`); }
+      try { const d = await detectarQuadro(); if (d) status(`${d.length} buraco(s) detectado(s).`); }
       catch (e) { status("Erro: " + e.message); }
     };
     img.onerror = () => status("Não foi possível abrir este arquivo. Envie uma foto (JPG ou PNG) ou um vídeo (MP4 ou WebM).");
@@ -273,18 +284,37 @@ function recorteEvidencia(d) {
   c.getContext("2d").drawImage(quadro, x, y, x2 - x, y2 - y, 0, 0, c.width, c.height);
   return c.toDataURL("image/jpeg", 0.8).split(",")[1];
 }
+// O botão fica liberado depois da primeira detecção da fonte (no vídeo, não pisca a cada quadro). O recorte é feito
+// na hora da detecção, do mesmo quadro em que a caixa foi calculada; fica o quadro com a detecção mais confiante.
+function guardarCandidato(dets) {
+  if (!dets.length) return;
+  const d = dets.reduce((a, b) => (b.confianca > a.confianca ? b : a));
+  if (st.candidato && d.confianca <= st.candidato.confianca) return;
+  const sevMax = dets.reduce((m, x) => (PESO_SEV[x.severidade] > PESO_SEV[m] ? x.severidade : m), "baixa");
+  st.candidato = { confianca: d.confianca, severidade: sevMax, evidencia: recorteEvidencia(d) };
+  $("#btn-relatar").disabled = false;
+}
+function limparCandidato() {
+  st.candidato = null; $("#btn-relatar").disabled = true; $("#resposta").textContent = "";
+}
 $("#btn-relatar").addEventListener("click", async () => {
-  const d = [...st.deteccoes].sort((a, b) => b.confianca - a.confianca)[0];
-  if (!d) return;
-  const pesoSev = { baixa: 1, media: 2, alta: 3 };
-  const sevMax = st.deteccoes.reduce((m, x) => (pesoSev[x.severidade] > pesoSev[m] ? x.severidade : m), "baixa");
-  const corpo = { lat: parseFloat($("#lat").value), lon: parseFloat($("#lon").value), severidade: sevMax,
-    confianca_max: d.confianca, origem: "cidadao", modelo: st.modelo?.modelo, evidencia_jpg_base64: recorteEvidencia(d) };
-  const r = await fetch("/v1/relatos", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(corpo) });
-  const j = await r.json();
-  const el = $("#resposta");
-  el.className = "resposta " + (r.ok ? "ok" : "erro");
-  el.textContent = r.ok ? `${j.mensagem} (prioridade ${j.relato.prioridade}).` : `Erro: ${JSON.stringify(j.detail)}`;
+  const c = st.candidato;
+  if (!c) return;
+  const corpo = { lat: parseFloat($("#lat").value), lon: parseFloat($("#lon").value), severidade: c.severidade,
+    confianca_max: c.confianca, origem: "cidadao", modelo: st.modelo?.modelo, evidencia_jpg_base64: c.evidencia };
+  const el = $("#resposta"), btn = $("#btn-relatar");
+  btn.disabled = true; el.className = "resposta"; el.textContent = "Enviando…";
+  try {
+    const r = await fetch("/v1/relatos", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(corpo) });
+    const j = await r.json();
+    el.className = "resposta " + (r.ok ? "ok" : "erro");
+    el.textContent = r.ok ? `${j.mensagem} (prioridade ${j.relato.prioridade}).` : `Erro: ${JSON.stringify(j.detail)}`;
+    if (r.ok && st.candidato === c) st.candidato = null;   // o mesmo buraco não vai duas vezes sem querer
+  } catch (e) {
+    el.className = "resposta erro"; el.textContent = "Não foi possível enviar o relato: " + e.message;
+  } finally {
+    btn.disabled = !st.candidato;
+  }
 });
 
 /* ------------------------------------------------------------------ zeladoria */
@@ -354,7 +384,7 @@ async function analisarImagemUrl(url) {
   prepararTela(img.naturalWidth, img.naturalHeight);
   quadro.getContext("2d").drawImage(img, 0, 0);
   const d = await detectarQuadro();
-  status(`${d.length} buraco(s) detectado(s) · exemplo ${url.split("/").pop()}`);
+  if (d) status(`${d.length} buraco(s) detectado(s) · exemplo ${url.split("/").pop()}`);
 }
 
 (async () => {
