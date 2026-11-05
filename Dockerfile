@@ -2,13 +2,13 @@
 # VigiaVia MVP — imagem enxuta (sem PyTorch), multi-stage, usuário não root, sem segredos.
 # Segredos (ex.: METRICS_TOKEN) entram SÓ em tempo de execução, como variável de ambiente.
 
-FROM python:3.12-slim-bookworm AS dependencias
+FROM python:3.15-slim-bookworm AS dependencias
 ENV PIP_NO_CACHE_DIR=1 PIP_DISABLE_PIP_VERSION_CHECK=1
 WORKDIR /build
 COPY requirements.txt .
 RUN pip install --prefix=/instalado -r requirements.txt
 
-FROM python:3.12-slim-bookworm
+FROM python:3.15-slim-bookworm
 LABEL org.opencontainers.image.title="vigiavia-mvp" \
       org.opencontainers.image.source="https://github.com/akiramrt/vigiavia-mvp" \
       org.opencontainers.image.licenses="AGPL-3.0"
