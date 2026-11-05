@@ -24,6 +24,9 @@ COPY src/ src/
 COPY api/ api/
 COPY configs/ configs/
 COPY modelos/vigiavia_buracos.onnx modelos/
+# commit que gerou a imagem (exposto no /health): o smoke test confirma que a versão nova está no ar
+ARG COMMIT=dev
+ENV VIGIAVIA_COMMIT=$COMMIT
 USER 10001
 EXPOSE 8000
 HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \

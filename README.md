@@ -5,7 +5,7 @@
 
 [![DevSecOps](https://github.com/akiramrt/vigiavia-mvp/actions/workflows/devsecops.yml/badge.svg)](https://github.com/akiramrt/vigiavia-mvp/actions/workflows/devsecops.yml)
 
-**🌐 MVP no ar:** ⟨URL_MVP⟩ · 📄 [Relatório da disciplina (PDF)](docs/relatorio/VigiaVia_Secure_DevOps.pdf) ·
+**🌐 MVP no ar:** https://ca-vigiavia-prod.happywave-0bf5b4c3.brazilsouth.azurecontainerapps.io · 📄 [Relatório da disciplina (PDF)](docs/relatorio/VigiaVia_Secure_DevOps.pdf) ·
 🧠 [Componente de visão computacional](https://github.com/akiramrt/vigiavia-visao-computacional)
 
 | Integrante | RM |
@@ -25,7 +25,7 @@
 | **Arquitetura: componentes** | API FastAPI + interface web (cidadão e zeladoria) · detector YOLO26n em ONNX Runtime · fila de relatos com deduplicação geográfica · Azure Container Apps + ACR + Log Analytics (Terraform) · pipeline DevSecOps (GitHub Actions) · Prometheus + Grafana. |
 | **Fontes de dados** | RDD2022 (treino do modelo, CC BY-SA 4.0); relatos e detecções enviados pelos cidadãos; dados de demonstração simulados na Bela Vista (sinalizados como `demonstracao`). |
 | **Modelos de IA utilizados** | YOLO26n treinado no RDD2022 (mAP@0,5 = 0,585 no teste), exportado para ONNX; executado no servidor (ONNX Runtime) ou no navegador (onnxruntime-web). |
-| **URL do MVP e repositório** | ⟨URL_MVP⟩ · https://github.com/akiramrt/vigiavia-mvp |
+| **URL do MVP e repositório** | https://ca-vigiavia-prod.happywave-0bf5b4c3.brazilsouth.azurecontainerapps.io · https://github.com/akiramrt/vigiavia-mvp |
 | **Indicadores de impacto** | Tempo entre detecção e reparo · % de chamados duplicados evitados · buracos detectados por km rodado · precisão das detecções confirmadas pela zeladoria. Operação: disponibilidade, p95 de latência, taxa de erros e saturação (4 sinais de ouro). |
 | **ODS conectados** | ODS 11 (11.2, 11.3) · ODS 9 (9.1) · ODS 3 (3.6) |
 
@@ -73,7 +73,7 @@ Depois, cadastre em **Settings → Secrets and variables → Actions** os valore
 ```bash
 python scripts/preparar_segredos.py --fqdn <fqdn do terraform output>
 docker compose --profile observabilidade up -d
-python scripts/gerar_carga.py --url ⟨URL_MVP⟩ --concorrencia 16 --duracao 300   # dispara o alerta de latência
+python scripts/gerar_carga.py --url https://ca-vigiavia-prod.happywave-0bf5b4c3.brazilsouth.azurecontainerapps.io --concorrencia 16 --duracao 300   # dispara o alerta de latência
 ```
 
 ## Custos (preços reais, Brazil South)

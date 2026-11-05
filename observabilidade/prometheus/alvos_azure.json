@@ -1,1 +1,10 @@
-[]
+[
+  {
+    "targets": [
+      "ca-vigiavia-prod.happywave-0bf5b4c3.brazilsouth.azurecontainerapps.io"
+    ],
+    "labels": {
+      "ambiente": "azure"
+    }
+  }
+]

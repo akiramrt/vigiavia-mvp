@@ -122,7 +122,7 @@ jobs:
           # com o índice OCI + atestação "unknown/unknown" que o BuildKit cria por padrão.
           # A rastreabilidade da cadeia continua no SBOM gerado logo abaixo.
           BUILDX_NO_DEFAULT_ATTESTATIONS: "1"
-        run: docker build -t "$IMAGEM:${{ github.sha }}" .
+        run: docker build --build-arg COMMIT=${{ github.sha }} -t "$IMAGEM:${{ github.sha }}" .
 
       - name: Trivy — vulnerabilidades da imagem (SO e bibliotecas)
         uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
@@ -168,9 +168,8 @@ jobs:
     needs: build
     if: github.ref == 'refs/heads/main' && github.event_name == 'push' && vars.DEPLOY_HABILITADO == 'true'
     runs-on: ubuntu-latest
-    environment:
-      name: producao
-      url: ${{ steps.publicacao.outputs.url }}
+    # Sem "environment:" de propósito: com ele o claim 'sub' do token OIDC vira "...:environment:<nome>"
+    # e deixa de casar com a credencial federada, que só confia na branch main (ref:refs/heads/main).
     permissions:
       contents: read
       id-token: write
@@ -189,17 +188,22 @@ jobs:
           APP: ${{ secrets.ACA_NOME }}
           RG: ${{ secrets.AZURE_RG }}
         run: |
+          az config set extension.use_dynamic_install=yes_without_prompt -o none
           az containerapp update -n "$APP" -g "$RG" --image "$ACR.azurecr.io/$IMAGEM:${{ github.sha }}" -o none
+          az containerapp revision list -n "$APP" -g "$RG" -o table \
+            --query "[?properties.active].{revisao:name, imagem:properties.template.containers[0].image, saude:properties.healthState, estado:properties.runningState}"
           FQDN=$(az containerapp show -n "$APP" -g "$RG" --query properties.configuration.ingress.fqdn -o tsv)
           echo "url=https://$FQDN" >> "$GITHUB_OUTPUT"
 
-      - name: Smoke test (HTTPS /health)
+      - name: Smoke test (HTTPS /health servindo o commit implantado)
         env:
           URL: ${{ steps.publicacao.outputs.url }}
         run: |
           for i in $(seq 1 30); do
-            if curl -fsS --max-time 10 "$URL/health"; then echo; echo "MVP no ar: $URL"; exit 0; fi
+            SAUDE=$(curl -fsS --max-time 10 "$URL/health" || true)
+            echo "$SAUDE"
+            if echo "$SAUDE" | grep -q '"commit":"${{ github.sha }}"'; then echo "MVP no ar com o commit ${{ github.sha }}: $URL"; exit 0; fi
             sleep 10
           done
-          echo "MVP não respondeu ao smoke test" >&2
+          echo "A versão nova não respondeu ao smoke test" >&2
           exit 1

@@ -244,7 +244,8 @@ def _gravar_relato(lat, lon, sev, conf, origem, modelo, evidencia) -> dict:
 @app.get("/health")
 def health() -> dict:
     det: DetectorONNX = ESTADO["detector"]
-    return {"status": "ok", "versao": __version__, "modelo": det.nome, "limiar_confianca": det.conf}
+    return {"status": "ok", "versao": __version__, "commit": os.getenv("VIGIAVIA_COMMIT", "dev"),
+            "modelo": det.nome, "limiar_confianca": det.conf}
 
 
 @app.get("/metrics", include_in_schema=False)
