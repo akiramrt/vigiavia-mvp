@@ -117,6 +117,11 @@ jobs:
           exit-code: "1"
 
       - name: Build da imagem
+        env:
+          # manifesto de imagem simples: o Azure Container Apps falha ("Artifact app provisioning failed")
+          # com o índice OCI + atestação "unknown/unknown" que o BuildKit cria por padrão.
+          # A rastreabilidade da cadeia continua no SBOM gerado logo abaixo.
+          BUILDX_NO_DEFAULT_ATTESTATIONS: "1"
         run: docker build -t "$IMAGEM:${{ github.sha }}" .
 
       - name: Trivy — vulnerabilidades da imagem (SO e bibliotecas)
