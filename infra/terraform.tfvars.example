@@ -1,0 +1,5 @@
+# Copie para terraform.tfvars (ignorado pelo git) e preencha.
+subscription_id = "00000000-0000-0000-0000-000000000000"
+location        = "brazilsouth"
+github_repo     = "akiramrt/vigiavia-mvp"
+metrics_token   = "troque-pelo-mesmo-METRICS_TOKEN-do-.env"

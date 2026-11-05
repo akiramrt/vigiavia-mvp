@@ -1,0 +1,24 @@
+# segredos e configuração local — NUNCA versionar
+.env
+*.env
+!.env.example
+observabilidade/segredos/
+
+# Terraform: state e variáveis ficam FORA do repositório (state remoto no Azure Storage)
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+!*.tfvars.example
+backend.hcl
+crash.log
+*.tfplan
+.terraform.lock.hcl.bak
+
+# Python / execução local
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+dados/
+.chrome/

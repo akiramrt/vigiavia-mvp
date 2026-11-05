@@ -1,0 +1,14 @@
+.git
+.github
+.env
+*.env
+infra
+observabilidade
+docs
+tests
+scripts
+dados
+**/__pycache__
+**/*.pyc
+*.tfstate*
+*.tfvars

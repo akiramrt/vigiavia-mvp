@@ -1,0 +1,56 @@
+{
+  "regiao": "brazilsouth",
+  "precos_usd": {
+    "vcpu_ativa": 2.4e-05,
+    "vcpu_ociosa": 3e-06,
+    "mem_ativa": 3e-06,
+    "mem_ociosa": 3e-06,
+    "req_milhao": 0.4,
+    "acr_dia": 0.1666,
+    "log_gb": 0.0,
+    "blob_gb": 0.0489
+  },
+  "ptax": 5.4778,
+  "data_ptax": "2026-11-04",
+  "fonte": "prices.azure.com + BCB PTAX",
+  "cenarios": [
+    {
+      "cenario": "MVP (1 réplica 0,5 vCPU / 1 GiB, 5% ativa)",
+      "replicas": 1,
+      "vcpu": 0.5,
+      "gib": 1,
+      "fracao_ativa": 0.05,
+      "requisicoes_mes": 300000,
+      "itens_usd": {
+        "Container Apps — vCPU ativa": 0.0,
+        "Container Apps — vCPU ociosa": 3.74,
+        "Container Apps — memória": 6.8,
+        "Container Apps — requisições": 0.0,
+        "Container Registry Basic": 5.06,
+        "Log Analytics (ingestão)": 0.0,
+        "Storage do state (Terraform)": 0.0
+      },
+      "total_usd": 15.61,
+      "total_brl": 85.53
+    },
+    {
+      "cenario": "Cidade (4 réplicas 1 vCPU / 2 GiB, 40% ativas)",
+      "replicas": 4,
+      "vcpu": 1,
+      "gib": 2,
+      "fracao_ativa": 0.4,
+      "requisicoes_mes": 20000000,
+      "itens_usd": {
+        "Container Apps — vCPU ativa": 96.6,
+        "Container Apps — vCPU ociosa": 18.92,
+        "Container Apps — memória": 61.99,
+        "Container Apps — requisições": 7.2,
+        "Container Registry Basic": 5.06,
+        "Log Analytics (ingestão)": 0.0,
+        "Storage do state (Terraform)": 0.0
+      },
+      "total_usd": 189.77,
+      "total_brl": 1039.54
+    }
+  ]
+}

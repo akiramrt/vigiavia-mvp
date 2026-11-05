@@ -1,0 +1,35 @@
+# Alertas sobre os 4 sinais de ouro (latência, tráfego, erros, saturação) da API VigiaVia.
+groups:
+  - name: vigiavia-sinais-de-ouro
+    rules:
+      - alert: VigiaViaForaDoAr
+        expr: up{job=~"vigiavia.*"} == 0
+        for: 1m
+        labels: {severidade: critica}
+        annotations:
+          resumo: "API {{ $labels.job }} inacessível há mais de 1 minuto"
+
+      - alert: VigiaViaLatenciaAlta
+        expr: |
+          histogram_quantile(0.95, sum by (job, le) (
+            rate(http_request_duration_seconds_bucket{job=~"vigiavia.*", rota="/v1/deteccoes"}[1m]))) > 1
+        for: 1m
+        labels: {severidade: alta}
+        annotations:
+          resumo: "p95 da detecção acima de 1 s em {{ $labels.job }} (valor: {{ $value | humanize }} s)"
+
+      - alert: VigiaViaErros5xx
+        expr: |
+          sum by (job) (rate(http_requests_total{job=~"vigiavia.*", status=~"5.."}[5m]))
+            / sum by (job) (rate(http_requests_total{job=~"vigiavia.*"}[5m])) > 0.05
+        for: 2m
+        labels: {severidade: alta}
+        annotations:
+          resumo: "Mais de 5% de respostas 5xx em {{ $labels.job }}"
+
+      - alert: VigiaViaSaturada
+        expr: max by (job) (http_requests_em_andamento{job=~"vigiavia.*"}) >= 6
+        for: 1m
+        labels: {severidade: media}
+        annotations:
+          resumo: "Fila de requisições em {{ $labels.job }}: {{ $value }} em andamento"

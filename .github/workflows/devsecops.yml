@@ -1,0 +1,193 @@
+# Pipeline DevSecOps do VigiaVia: nada chega ao cidadão sem passar pelos portões de segurança.
+#
+#   push -> [Gitleaks | Semgrep | pytest] -> Trivy (IaC + Dockerfile) -> build -> Trivy (imagem) + SBOM
+#        -> (só main) login OIDC no Azure -> push no ACR -> deploy no Container Apps -> smoke test
+#
+# Credenciais: NENHUMA senha de nuvem. O GitHub emite um token OIDC de curta duração que o Entra ID troca
+# por acesso (identidade federada criada pelo Terraform). Os identificadores ficam em GitHub Secrets.
+name: DevSecOps
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: devsecops-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  IMAGEM: vigiavia-mvp
+  TRIVY_DB_REPOSITORY: public.ecr.aws/aquasecurity/trivy-db
+  TRIVY_JAVA_DB_REPOSITORY: public.ecr.aws/aquasecurity/trivy-java-db
+
+jobs:
+  segredos:
+    name: Segredos (Gitleaks)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  sast:
+    name: SAST (Semgrep)
+    runs-on: ubuntu-latest
+    container:
+      image: semgrep/semgrep
+    steps:
+      - uses: actions/checkout@v4
+      - name: Semgrep (Python, JavaScript, Dockerfile, Terraform e segredos)
+        run: >
+          semgrep scan --metrics=off --error --exclude tests
+          --config p/python --config p/javascript --config p/secrets
+          --config p/dockerfile --config p/terraform
+
+  testes:
+    name: Testes (pytest)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements-dev.txt
+      - run: pytest -q
+
+  compose:
+    name: Stack docker compose (API + Prometheus + Grafana)
+    needs: testes
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Segredos efêmeros (gerados no runner, nunca versionados)
+        run: |
+          printf "METRICS_TOKEN=%s\nGRAFANA_SENHA=%s\n" "$(openssl rand -hex 24)" "$(openssl rand -hex 16)" > .env
+          mkdir -p observabilidade/segredos
+          grep METRICS_TOKEN .env | cut -d= -f2 | tr -d '\n' > observabilidade/segredos/metrics_token
+          [ -f observabilidade/prometheus/alvos_azure.json ] || echo "[]" > observabilidade/prometheus/alvos_azure.json
+      - name: Subir a stack
+        run: docker compose --profile observabilidade up -d --build --wait --wait-timeout 180
+      - name: Verificar saúde e coleta de métricas
+        run: |
+          curl -fsS http://localhost:8000/health
+          curl -fsS http://localhost:9090/-/ready
+          curl -fsS http://localhost:3000/api/health
+          for i in $(seq 1 12); do
+            UP=$(curl -s 'http://localhost:9090/api/v1/query?query=up%7Bjob%3D%22vigiavia-local%22%7D' | python3 -c "import json,sys; r=json.load(sys.stdin)['data']['result']; print(r[0]['value'][1] if r else '0')")
+            [ "$UP" = "1" ] && echo "Prometheus coletando a API (up=1)" && exit 0
+            sleep 5
+          done
+          exit 1
+      - name: Estado dos containers
+        if: always()
+        run: docker compose --profile observabilidade ps
+
+  build:
+    name: Build + Trivy
+    needs: [segredos, sast, testes, compose]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Trivy — configuração (Dockerfile e Terraform)
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          scan-type: config
+          scan-ref: .
+          severity: HIGH,CRITICAL
+          exit-code: "1"
+
+      - name: Build da imagem
+        run: docker build -t "$IMAGEM:${{ github.sha }}" .
+
+      - name: Trivy — vulnerabilidades da imagem (SO e bibliotecas)
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: ${{ env.IMAGEM }}:${{ github.sha }}
+          severity: HIGH,CRITICAL
+          ignore-unfixed: true
+          vuln-type: os,library
+          exit-code: "1"
+
+      - name: SBOM (CycloneDX) da imagem
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: ${{ env.IMAGEM }}:${{ github.sha }}
+          format: cyclonedx
+          output: sbom-vigiavia.cdx.json
+          skip-setup-trivy: true
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sbom
+          path: sbom-vigiavia.cdx.json
+
+      - name: Login no Azure (OIDC, sem senha)
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push' && vars.PUBLICAR_IMAGEM == 'true'
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Push da imagem aprovada para o ACR
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push' && vars.PUBLICAR_IMAGEM == 'true'
+        env:
+          ACR: ${{ secrets.ACR_NOME }}
+        run: |
+          az acr login --name "$ACR"
+          docker tag "$IMAGEM:${{ github.sha }}" "$ACR.azurecr.io/$IMAGEM:${{ github.sha }}"
+          docker push "$ACR.azurecr.io/$IMAGEM:${{ github.sha }}"
+
+  deploy:
+    name: Deploy (Azure Container Apps)
+    needs: build
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push' && vars.DEPLOY_HABILITADO == 'true'
+    runs-on: ubuntu-latest
+    environment:
+      name: producao
+      url: ${{ steps.publicacao.outputs.url }}
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Login no Azure (OIDC, sem senha)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Nova revisão com a imagem aprovada
+        id: publicacao
+        env:
+          ACR: ${{ secrets.ACR_NOME }}
+          APP: ${{ secrets.ACA_NOME }}
+          RG: ${{ secrets.AZURE_RG }}
+        run: |
+          az containerapp update -n "$APP" -g "$RG" --image "$ACR.azurecr.io/$IMAGEM:${{ github.sha }}" -o none
+          FQDN=$(az containerapp show -n "$APP" -g "$RG" --query properties.configuration.ingress.fqdn -o tsv)
+          echo "url=https://$FQDN" >> "$GITHUB_OUTPUT"
+
+      - name: Smoke test (HTTPS /health)
+        env:
+          URL: ${{ steps.publicacao.outputs.url }}
+        run: |
+          for i in $(seq 1 30); do
+            if curl -fsS --max-time 10 "$URL/health"; then echo; echo "MVP no ar: $URL"; exit 0; fi
+            sleep 10
+          done
+          echo "MVP não respondeu ao smoke test" >&2
+          exit 1

@@ -1,0 +1,16 @@
+# Atualizações automáticas de dependências (correções de segurança chegam como pull request,
+# e cada PR passa pelo mesmo pipeline DevSecOps antes de entrar na main).
+version: 2
+updates:
+  - package-ecosystem: pip
+    directory: /
+    schedule: {interval: weekly}
+  - package-ecosystem: docker
+    directory: /
+    schedule: {interval: weekly}
+  - package-ecosystem: github-actions
+    directory: /
+    schedule: {interval: weekly}
+  - package-ecosystem: terraform
+    directory: /infra
+    schedule: {interval: weekly}
