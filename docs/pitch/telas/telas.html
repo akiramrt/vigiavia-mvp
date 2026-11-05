@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>VigiaVia — telas do pitch</title>
+<style>
+  :root { --fundo:#0f1419; --cartao:#182029; --borda:#2b3743; --texto:#eef2f5; --suave:#a9b6c2; --ambar:#ffb020; --verm:#ff5a4e; --verde:#3ccf7a; }
+  * { box-sizing:border-box; margin:0; }
+  body { background:#000; font-family:"Segoe UI", Arial, sans-serif; color:var(--texto); }
+  .tela { width:1920px; height:1080px; background:radial-gradient(1200px 700px at 85% 0%, #1d2a36 0%, var(--fundo) 60%); padding:90px 110px 70px; position:relative; overflow:hidden; display:flex; flex-direction:column; justify-content:center; }
+  .marca { position:absolute; top:46px; right:110px; display:flex; align-items:center; gap:14px; font-weight:700; font-size:30px; color:var(--texto); }
+  .logo { width:34px; height:34px; border-radius:50%; background:radial-gradient(circle at 50% 50%, var(--fundo) 0 30%, var(--ambar) 31% 100%); box-shadow:0 0 0 4px rgba(255,176,32,.25); }
+  .rotulo { color:var(--ambar); font-size:30px; font-weight:700; letter-spacing:4px; text-transform:uppercase; }
+  h1 { font-size:72px; line-height:1.08; margin:14px 0 46px; font-weight:800; }
+  h1 em { color:var(--ambar); font-style:normal; }
+  .grade { display:grid; gap:34px; align-items:stretch; }
+  .c3 { grid-template-columns:repeat(3,1fr); } .c2 { grid-template-columns:1fr 1fr; }
+  .cartao { background:var(--cartao); border:2px solid var(--borda); border-radius:26px; padding:40px 42px; }
+  .num { white-space:nowrap; font-size:88px; font-weight:800; color:var(--ambar); line-height:1; letter-spacing:-2px; }
+  .num.verm { color:var(--verm); }
+  .leg { font-size:38px; line-height:1.3; margin-top:18px; }
+  .leg small { display:block; color:var(--suave); font-size:28px; margin-top:12px; }
+  .fonte { position:absolute; left:110px; bottom:40px; color:var(--suave); font-size:22px; }
+  h2 { font-size:44px; margin-bottom:20px; color:var(--ambar); }
+  ul.lista { list-style:none; padding:0; font-size:36px; line-height:1.4; }
+  ul.lista li { padding-left:44px; position:relative; margin:10px 0; }
+  ul.lista li::before { content:""; position:absolute; left:4px; top:20px; width:18px; height:18px; border-radius:50%; background:var(--ambar); }
+  .passo .n { width:76px; height:76px; border-radius:50%; background:var(--ambar); color:#1a1300; font-size:44px; font-weight:800; display:flex; align-items:center; justify-content:center; margin-bottom:24px; }
+  .passo h2 { color:var(--texto); font-size:52px; }
+  .passo p { font-size:34px; line-height:1.38; color:#dfe6ec; }
+  .faixa { margin-top:36px; background:rgba(255,176,32,.12); border:2px solid rgba(255,176,32,.5); border-radius:20px; padding:24px 34px; font-size:36px; }
+  .destaque { color:var(--ambar); font-weight:700; }
+  .ods { display:flex; gap:22px; margin-top:34px; }
+  .ods div { border-radius:16px; padding:18px 26px; font-size:32px; font-weight:800; color:#fff; }
+  table { width:100%; border-collapse:collapse; font-size:30px; margin-top:12px; }
+  td, th { padding:10px 12px; border-bottom:2px solid var(--borda); text-align:right; }
+  td:first-child, th:first-child { text-align:left; }
+  th { color:var(--suave); font-weight:600; }
+  .pos { color:var(--verde); font-weight:700; } .neg { color:var(--verm); }
+  .final { justify-content:center; align-items:center; text-align:center; }
+  .final h1 { font-size:80px; margin:30px 0 50px; }
+  .equipe { display:flex; gap:40px; justify-content:center; font-size:36px; }
+  .equipe div { background:var(--cartao); border:2px solid var(--borda); border-radius:20px; padding:24px 36px; }
+  .equipe span { display:block; color:var(--suave); font-size:28px; margin-top:6px; }
+  .links { margin-top:46px; font-size:30px; color:var(--suave); line-height:1.6; }
+  .titulo { justify-content:center; }
+  .titulo .logo { width:120px; height:120px; box-shadow:0 0 0 14px rgba(255,176,32,.2); margin-bottom:46px; }
+  .titulo h1 { font-size:150px; margin:0; }
+  .titulo p { font-size:48px; color:#dfe6ec; margin-top:20px; }
+  /* tarja com o nome de quem fala: fundo transparente, sobreposta ao vídeo da câmera */
+  .terco { width:1920px; height:1080px; background:transparent; position:relative; }
+  .terco .caixa { position:absolute; left:90px; bottom:110px; background:rgba(15,20,25,.88); border-left:12px solid var(--ambar); border-radius:0 18px 18px 0; padding:22px 40px 24px 30px; }
+  .terco b { display:block; font-size:50px; } .terco span { font-size:32px; color:var(--suave); }
+</style>
+</head>
+<body>
+
+<section class="tela titulo" id="tela0_abertura">
+  <div class="logo"></div>
+  <h1>VigiaVia</h1>
+  <p>Zeladoria inteligente de vias públicas · CitizenTech · FIAP GS 2026.2</p>
+</section>
+
+<section class="tela" id="tela1_problema">
+  <div class="marca"><span class="logo"></span>VigiaVia</div>
+  <div class="rotulo">O problema</div>
+  <h1>Hoje, a cidade <em>espera o chamado</em></h1>
+  <div class="grade c3">
+    <div class="cartao"><div class="num">113,1 mil</div><div class="leg">pedidos de tapa-buraco em São Paulo em 2025<small>e o mesmo buraco gera vários chamados</small></div></div>
+    <div class="cartao"><div class="num">R$ 144 mi</div><div class="leg">empenhados só em tapa-buraco em 2019<small>trabalho guiado por chamados manuais</small></div></div>
+    <div class="cartao"><div class="num verm">475</div><div class="leg">motociclistas mortos no trânsito da capital em 2025<small>quem mais sente o buraco</small></div></div>
+  </div>
+  <div class="fonte">Fontes: SMSUB/PMSP via BNews SP (2026) · CartaCapital · Infosiga/Detran-SP via Portal do Trânsito (2026)</div>
+</section>
+
+<section class="tela" id="tela2_solucao">
+  <div class="marca"><span class="logo"></span>VigiaVia</div>
+  <div class="rotulo">A solução</div>
+  <h1>Cada buraco vira <em>um relato único</em>, priorizado</h1>
+  <div class="grade c3">
+    <div class="cartao passo"><div class="n">1</div><h2>Detecta</h2><p>Câmeras que já circulam — celular do cidadão, ônibus, entregadores e viaturas — com IA de visão computacional em tempo real.</p></div>
+    <div class="cartao passo"><div class="n">2</div><h2>Relata</h2><p>Só o recorte da via e a localização. Nenhum rosto, nenhuma foto inteira guardada.</p></div>
+    <div class="cartao passo"><div class="n">3</div><h2>Prioriza</h2><p>Fila única por buraco, por severidade e confirmações. A zeladoria valida e gera a ordem de serviço.</p></div>
+  </div>
+  <div class="faixa">Proposta de valor: <span class="destaque">menos chamados duplicados, reparo mais rápido</span> e evidência para cada ordem de serviço.</div>
+</section>
+
+<section class="tela" id="tela3_negocio">
+  <div class="marca"><span class="logo"></span>VigiaVia</div>
+  <div class="rotulo">Modelo de negócio</div>
+  <h1>Quem paga, quem usa e <em>como chegamos</em></h1>
+  <div class="grade c3">
+    <div class="cartao"><h2>Quem paga</h2><ul class="lista">
+      <li><b>Prefeitura</b> (zeladoria), assinatura SaaS</li>
+      <li><span class="destaque">R$ 60 por km/ano</span> ≈ R$ 2 mil/mês por subprefeitura</li>
+      <li>Referência: vialytics, 600+ municípios, ≈ R$ 63 por km/ano</li></ul></div>
+    <div class="cartao"><h2>Quem usa</h2><ul class="lista">
+      <li>Cidadão: <b>grátis</b>, web e celular</li>
+      <li>Agentes de zeladoria: fila e mapa</li>
+      <li>Frotas parceiras: celular embarcado em troca do alerta aos motoristas</li></ul></div>
+    <div class="cartao"><h2>Como chega</h2><ul class="lista">
+      <li><b>CPSI</b> — Marco Legal das Startups: piloto até <span class="destaque">R$ 1,6 mi</span></li>
+      <li>1 subprefeitura → as 32 de SP → cidades médias</li>
+      <li>Integração com 156 e Colab</li></ul></div>
+  </div>
+  <div class="fonte">Fontes: LC 182/2021 (Demarest) · piloto vialytics em Louth, Irlanda (€17.500/ano para 1.691 km) · PTAX do euro de 05/11/2026</div>
+</section>
+
+<section class="tela" id="tela4_indicadores">
+  <div class="marca"><span class="logo"></span>VigiaVia</div>
+  <div class="rotulo">Indicadores</div>
+  <h1>O que medimos: <em>negócio e impacto</em></h1>
+  <div class="grade c2">
+    <div class="cartao"><h2>Negócio</h2><ul class="lista">
+      <li>km monitorados e cidades contratantes</li>
+      <li>Receita recorrente anual (ARR)</li>
+      <li>Margem bruta: <span class="destaque">74%</span></li>
+      <li>Renovação de contratos e custo por km</li></ul></div>
+    <div class="cartao"><h2>Impacto no cidadão</h2><ul class="lista">
+      <li>Tempo da detecção ao reparo</li>
+      <li>% de chamados duplicados evitados</li>
+      <li>Buracos detectados por km</li>
+      <li>Precisão confirmada pela zeladoria</li></ul></div>
+  </div>
+  <div class="ods">
+    <div style="background:#FD9D24">ODS 11 · 11.2 e 11.3</div>
+    <div style="background:#FD6925">ODS 9 · 9.1</div>
+    <div style="background:#4C9F38">ODS 3 · 3.6</div>
+  </div>
+</section>
+
+<section class="tela" id="tela5_viabilidade">
+  <div class="marca"><span class="logo"></span>VigiaVia</div>
+  <div class="rotulo">Viabilidade e pedido</div>
+  <h1>Custa pouco, <em>se paga em 2029</em></h1>
+  <div class="grade c2">
+    <div class="cartao"><h2>Números</h2><ul class="lista">
+      <li>Nuvem: <b>R$ 85/mês</b> no MVP · <b>R$ 1.040/mês</b> para SP inteira</li>
+      <li>SP inteira (13 mil km): <span class="destaque">R$ 780 mil/ano</span> = 0,54% do tapa-buraco de 2019</li></ul>
+      <table><tr><th>Ano</th><th>km</th><th>Receita</th><th>Resultado</th></tr>
+        <tr><td>2027</td><td>1.625</td><td>R$ 199 mil</td><td class="neg">−R$ 161 mil</td></tr>
+        <tr><td>2028</td><td>9.500</td><td>R$ 570 mil</td><td class="neg">−R$ 61 mil</td></tr>
+        <tr><td>2029</td><td>23.000</td><td>R$ 1,38 mi</td><td class="pos">+R$ 296 mil</td></tr></table></div>
+    <div class="cartao"><h2>O pedido</h2><ul class="lista">
+      <li><b>Prefeitura:</b> piloto de 6 meses na <span class="destaque">Subprefeitura Sé</span>, via CPSI — <b>R$ 150 mil</b></li>
+      <li>Metas: <b>−30%</b> de chamados duplicados, ordem de serviço em <b>&lt; 48 h</b>, precisão ≥ 80%</li>
+      <li><b>Investidores:</b> <span class="destaque">R$ 300 mil</span> de pré-seed até o equilíbrio</li></ul></div>
+  </div>
+  <div class="fonte">Custos: Azure Retail Prices API (Brazil South) + PTAX · premissas em docs/pitch/viabilidade.py</div>
+</section>
+
+<section class="tela final" id="tela6_final">
+  <div class="logo" style="width:96px;height:96px"></div>
+  <h1>Cada buraco vira um relato,<br><em>antes de virar um acidente.</em></h1>
+  <div class="equipe">
+    <div>Deivison Pertel<span>RM 550803</span></div>
+    <div>Eduardo Akira Murata<span>RM 98713</span></div>
+    <div>Wesley Souza de Oliveira<span>RM 97874</span></div>
+  </div>
+  <div class="links">MVP: ca-vigiavia-prod.happywave-0bf5b4c3.brazilsouth.azurecontainerapps.io<br>github.com/akiramrt/vigiavia-mvp · FIAP Global Solution 2026.2 · 4ES</div>
+</section>
+
+<section class="terco" id="tarja_deivison"><div class="caixa"><b>Deivison Pertel</b><span>RM 550803 · VigiaVia</span></div></section>
+<section class="terco" id="tarja_eduardo"><div class="caixa"><b>Eduardo Akira Murata</b><span>RM 98713 · VigiaVia</span></div></section>
+<section class="terco" id="tarja_wesley"><div class="caixa"><b>Wesley Souza de Oliveira</b><span>RM 97874 · VigiaVia</span></div></section>
+
+</body>
+</html>

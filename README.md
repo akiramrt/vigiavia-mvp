@@ -103,5 +103,11 @@ python scripts/gerar_carga.py --url https://ca-vigiavia-prod.happywave-0bf5b4c3.
 * **Responsabilidade compartilhada:** Microsoft cuida do hardware, rede física, hipervisor, plataforma do Container Apps,
   TLS do ingress; a equipe cuida do código, da imagem e suas dependências, identidades/RBAC, segredos, dados e configuração.
 
+## Pitch (Business Intelligence & Startup Development)
+
+[Modelo de negócio e viabilidade](docs/pitch/modelo_de_negocio.md) (números reproduzíveis em
+[`viabilidade.py`](docs/pitch/viabilidade.py)) · [roteiro de 5 minutos](docs/pitch/roteiro.md) ·
+[guia de gravação](docs/pitch/guia_gravacao.md) · [telas de apoio](docs/pitch/telas).
+
 ## Licença
 Código sob **AGPL-3.0**. Modelo treinado com Ultralytics YOLO (AGPL-3.0) sobre o RDD2022 (CC BY-SA 4.0).
