@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>VigiaVia — Deploy Blindado (Secure DevOps Tools &amp; Cloud Computing)</title>
+<style>
+  @page { size: A4; margin: 15mm 15mm 17mm;
+    @bottom-left { content: "VigiaVia · Deploy Blindado — FIAP Global Solution 2026.2 · 4ES"; font: 7.5pt "Segoe UI", sans-serif; color: #6b7280; }
+    @bottom-right { content: counter(page) " / " counter(pages); font: 7.5pt "Segoe UI", sans-serif; color: #6b7280; } }
+  @page :first { @bottom-left { content: none; } @bottom-right { content: none; } }
+  :root { --azul: #0b4f71; --verde: #0f766e; --verm: #b91c1c; --cinza: #4b5563; --borda: #d7dde4; --fundo: #f4f7f9; }
+  * { box-sizing: border-box; }
+  body { font: 9.6pt/1.45 "Segoe UI", Arial, sans-serif; color: #111827; margin: 0; background: #fff; }
+  h1 { font-size: 25pt; line-height: 1.1; margin: 0 0 6px; color: var(--azul); }
+  h2 { font-size: 14.5pt; color: var(--azul); border-bottom: 2px solid var(--azul); padding-bottom: 3px; margin: 18px 0 8px; break-after: avoid; }
+  h3 { font-size: 11pt; color: var(--verde); margin: 12px 0 5px; break-after: avoid; }
+  p { margin: 4px 0 7px; text-align: justify; }
+  a { color: #0b5cad; text-decoration: none; }
+  ul { margin: 3px 0 7px 18px; padding: 0; } li { margin: 1px 0; }
+  code { font: 8.4pt Consolas, monospace; background: var(--fundo); padding: 0 3px; border-radius: 3px; }
+  pre { font: 7.3pt/1.32 Consolas, monospace; background: var(--fundo); border: 1px solid var(--borda); border-radius: 5px; padding: 7px 9px; white-space: pre-wrap; word-break: break-word; margin: 5px 0 9px; break-inside: avoid; }
+  table { width: 100%; border-collapse: collapse; margin: 5px 0 10px; font-size: 8.6pt; break-inside: auto; }
+  th, td { border: 1px solid var(--borda); padding: 3.5px 6px; vertical-align: top; text-align: left; }
+  th { background: #e8f0f5; color: #0b3c55; }
+  tr { break-inside: avoid; }
+  figure { margin: 8px 0 12px; break-inside: avoid; text-align: center; }
+  figure img { max-width: 100%; border: 1px solid var(--borda); border-radius: 4px; }
+  figcaption { font-size: 8.2pt; color: var(--cinza); margin-top: 3px; font-style: italic; }
+  .capa { height: 262mm; display: flex; flex-direction: column; justify-content: space-between; break-after: page; }
+  .faixa { background: linear-gradient(120deg, #0b4f71, #0f766e); color: #fff; border-radius: 10px; padding: 22px 26px; }
+  .faixa h1 { color: #fff; font-size: 30pt; } .faixa p { color: #e6f4f1; text-align: left; margin: 2px 0; }
+  .selo { display: inline-block; background: rgba(255,255,255,.18); border-radius: 20px; padding: 2px 10px; font-size: 8.5pt; margin: 0 4px 6px 0; }
+  .links td:first-child { width: 31%; font-weight: 600; }
+  .ok { color: var(--verde); font-weight: 700; } .no { color: var(--verm); font-weight: 700; }
+  .caixa { border-left: 4px solid var(--verde); background: #f0faf8; padding: 6px 10px; margin: 6px 0 10px; border-radius: 0 5px 5px 0; break-inside: avoid; }
+  .alerta { border-left-color: var(--verm); background: #fdf2f2; }
+  .duas { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .quebra { break-before: page; }
+  .peq { font-size: 8pt; color: var(--cinza); }
+</style>
+</head>
+<body>
+
+<section class="capa">
+  <div class="faixa">
+    <span class="selo">FIAP · Global Solution 2026.2</span><span class="selo">CitizenTech</span><span class="selo">Engenharia de Software · 4ES</span>
+    <h1>VigiaVia — Deploy Blindado</h1>
+    <p style="font-size:13pt">MVP de detecção de buracos em vias públicas publicado na nuvem com pipeline DevSecOps, infraestrutura como código e observabilidade</p>
+    <p style="margin-top:10px">Disciplina <b>Secure DevOps Tools &amp; Cloud Computing</b> · Profs. Gabriel Arcanjo e Cleórbete Santos</p>
+  </div>
+
+  <div>
+    <h3>Integrantes</h3>
+    <table>
+      <tr><th>Nome</th><th>RM</th></tr>
+      <tr><td>Deivison Pertel</td><td>550803</td></tr>
+      <tr><td>Eduardo Akira Murata</td><td>98713</td></tr>
+      <tr><td>Wesley Souza de Oliveira</td><td>97874</td></tr>
+    </table>
+    <h3>Links (clicáveis)</h3>
+    <table class="links">
+      <tr><td>MVP publicado (Azure)</td><td><a href="https://ca-vigiavia-prod.happywave-0bf5b4c3.brazilsouth.azurecontainerapps.io">https://ca-vigiavia-prod.happywave-0bf5b4c3.brazilsouth.azurecontainerapps.io</a></td></tr>
+      <tr><td>Repositório público</td><td><a href="https://github.com/akiramrt/vigiavia-mvp">https://github.com/akiramrt/vigiavia-mvp</a></td></tr>
+      <tr><td>Pipeline DevSecOps</td><td><a href="https://github.com/akiramrt/vigiavia-mvp/actions/workflows/devsecops.yml">https://github.com/akiramrt/vigiavia-mvp/actions/workflows/devsecops.yml</a></td></tr>
+      <tr><td>Execução barrada (Trivy)</td><td><a href="https://github.com/akiramrt/vigiavia-mvp/actions/runs/41953686302">https://github.com/akiramrt/vigiavia-mvp/actions/runs/41953686302</a></td></tr>
+      <tr><td>Execução corrigida + deploy</td><td><a href="https://github.com/akiramrt/vigiavia-mvp/actions/runs/41954209587">https://github.com/akiramrt/vigiavia-mvp/actions/runs/41954209587</a></td></tr>
+      <tr><td>Dockerfile · Compose · Terraform</td><td><a href="https://github.com/akiramrt/vigiavia-mvp/blob/main/Dockerfile">Dockerfile</a> · <a href="https://github.com/akiramrt/vigiavia-mvp/blob/main/docker-compose.yml">docker-compose.yml</a> · <a href="https://github.com/akiramrt/vigiavia-mvp/tree/main/infra">infra/</a> · <a href="https://github.com/akiramrt/vigiavia-mvp/blob/main/.github/workflows/devsecops.yml">devsecops.yml</a></td></tr>
+      <tr><td>Componente de visão computacional</td><td><a href="https://github.com/akiramrt/vigiavia-visao-computacional">github.com/akiramrt/vigiavia-visao-computacional</a></td></tr>
+    </table>
+  </div>
+  <p class="peq">Entrega única por equipe · relatório gerado em 04/11/2026 · todas as evidências deste documento são reais, coletadas do ambiente publicado (Azure Brazil South), do GitHub Actions e do Prometheus/Grafana.</p>
+</section>
+
+<h2>1. Resumo e matriz de critérios</h2>
+<p>O <b>VigiaVia</b> detecta buracos em imagens de vias públicas (modelo YOLO26n exportado para ONNX) e entrega à zeladoria um relato único, georreferenciado e priorizado. Nesta disciplina, o MVP foi colocado <b>no ar no Azure Container Apps</b>, com toda a infraestrutura em <b>Terraform</b>, imagem <b>Docker</b> enxuta e sem root, um pipeline <b>GitHub Actions</b> que barra segredos, código inseguro e vulnerabilidades antes de qualquer deploy, e <b>Prometheus + Grafana</b> medindo os quatro sinais de ouro do serviço publicado.</p>
+<table>
+  <tr><th style="width:22%">Critério (peso)</th><th>O que foi entregue</th><th style="width:22%">Evidência</th></tr>
+  <tr><td><b>Container &amp; IaC</b> (5,0)</td><td>Dockerfile multi-stage <code>python:3.12-slim</code>, usuário 10001, <code>HEALTHCHECK</code>, nenhum segredo na imagem; stack completa no <code>docker compose</code> (API endurecida + Prometheus + Grafana). Terraform com state remoto no Azure Storage (Entra ID, sem chave), <code>.tfvars</code> e <code>backend.hcl</code> fora do git, ingress somente HTTPS e <b>nenhuma porta administrativa</b>.</td><td>Seções 3 e 4; <code>docs/evidencias/azure_configuracao.txt</code>; planos em <code>docs/evidencias/terraform_plan_*.txt</code></td></tr>
+  <tr><td><b>Pipeline DevSecOps</b> (4,0)</td><td>Gitleaks (histórico completo), Semgrep, pytest, validação do compose, Trivy (IaC/Dockerfile e imagem), SBOM; em <b>todo push</b>. Credenciais via <b>OIDC</b> (sem senha de nuvem) e identificadores em GitHub Secrets. Deploy automático da <code>main</code> com smoke test que confere o commit no ar. <b>Execução barrada e a corrigida.</b></td><td>Seção 5; runs <a href="https://github.com/akiramrt/vigiavia-mvp/actions/runs/41953686302">41953686302</a> (barrado) e <a href="https://github.com/akiramrt/vigiavia-mvp/actions/runs/41954209587">41954209587</a> (corrigido)</td></tr>
+  <tr><td><b>Observabilidade</b> (3,0)</td><td>API instrumentada (<code>/metrics</code> protegido por token); Prometheus coletando o MVP publicado via HTTPS; dashboard Grafana como código com latência, tráfego, erros e saturação; 4 regras de alerta; <b>alerta disparado</b> sob carga real.</td><td>Seção 6; prints do Grafana e do Prometheus</td></tr>
+  <tr><td><b>Documentação</b> (2,0)</td><td>Diagrama de arquitetura, responsabilidade compartilhada, onde moram os dados pessoais (LGPD), estimativa de custo com preços oficiais, README reproduzível com a ficha técnica.</td><td>Seções 2, 7, 8, 10 e <a href="https://github.com/akiramrt/vigiavia-mvp#readme">README</a></td></tr>
+</table>
+
+<h3>Ficha técnica do MVP</h3>
+<table>
+  <tr><th style="width:24%">Item</th><th>VigiaVia</th></tr>
+  <tr><td>Nome do produto</td><td>VigiaVia — zeladoria inteligente de vias públicas</td></tr>
+  <tr><td>Cidadão e território</td><td>Quem circula pelas vias (motociclistas, ciclistas, pedestres, motoristas, usuários de ônibus) e os agentes de zeladoria das subprefeituras. Piloto: centro de São Paulo (Bela Vista).</td></tr>
+  <tr><td>Problema, em uma frase</td><td>Buracos causam acidentes e custos, e sua identificação depende de chamados manuais, lentos, imprecisos e duplicados (113,1 mil pedidos de tapa-buraco em SP em 2025).</td></tr>
+  <tr><td>Proposta de valor</td><td>Detectar buracos automaticamente com as câmeras que já circulam pela cidade e entregar à zeladoria um relato único, georreferenciado e priorizado por buraco — com privacidade e validação humana.</td></tr>
+  <tr><td>Arquitetura: componentes</td><td>API FastAPI + interface web (cidadão e zeladoria) · detector YOLO26n em ONNX Runtime · fila de relatos com deduplicação geográfica · Azure Container Apps + ACR + Log Analytics (Terraform) · pipeline DevSecOps (GitHub Actions) · Prometheus + Grafana.</td></tr>
+  <tr><td>Fontes de dados</td><td>RDD2022 (treino do modelo, CC BY-SA 4.0); relatos e detecções enviados pelos cidadãos; dados de demonstração simulados na Bela Vista (marcados como <code>demonstracao</code>).</td></tr>
+  <tr><td>Modelos de IA utilizados</td><td>YOLO26n treinado no RDD2022 (mAP@0,5 = 0,585 no teste), exportado para ONNX; executado no servidor (ONNX Runtime) ou no navegador (onnxruntime-web).</td></tr>
+  <tr><td>URL do MVP e repositório</td><td><a href="https://ca-vigiavia-prod.happywave-0bf5b4c3.brazilsouth.azurecontainerapps.io">https://ca-vigiavia-prod.happywave-0bf5b4c3.brazilsouth.azurecontainerapps.io</a> · <a href="https://github.com/akiramrt/vigiavia-mvp">https://github.com/akiramrt/vigiavia-mvp</a></td></tr>
+  <tr><td>Indicadores de impacto</td><td>Tempo entre detecção e reparo · % de chamados duplicados evitados · buracos detectados por km rodado · precisão confirmada pela zeladoria. Operação: disponibilidade, p95 de latência, taxa de erros e saturação.</td></tr>
+  <tr><td>ODS conectados</td><td>ODS 11 (11.2, 11.3) · ODS 9 (9.1) · ODS 3 (3.6)</td></tr>
+</table>
+
+<h2>2. Arquitetura</h2>
+<figure><img src="../img/arquitetura.png" alt="Diagrama de arquitetura"><figcaption>Figura 1 — Arquitetura de produção: o cidadão acessa por HTTPS; o GitHub Actions publica por OIDC; o Prometheus coleta o <code>/metrics</code> com token.</figcaption></figure>
+<table>
+  <tr><th style="width:25%">Componente</th><th>Função e decisão de segurança</th></tr>
+  <tr><td>Azure Container Apps <code>ca-vigiavia-prod</code></td><td>Executa o container da API (0,5 vCPU / 1 GiB, 1 réplica fixa: sem <i>cold start</i>). Ingress gerenciado com certificado TLS, <b>HTTP inseguro desligado</b>; a porta 8000 do container só é alcançável pelo ingress. Plataforma serverless: <b>não existe SSH/RDP</b>.</td></tr>
+  <tr><td>Azure Container Registry <code>acrvigiavia2fplg</code></td><td>Registro privado da imagem aprovada. <b>Usuário admin desligado</b>: o app puxa a imagem com identidade gerenciada (AcrPull) e o pipeline publica com identidade federada (AcrPush).</td></tr>
+  <tr><td>Identidades gerenciadas + Entra ID</td><td><code>id-vigiavia-prod-app</code> (pull da imagem) e <code>id-vigiavia-prod-github</code> (deploy). A segunda só aceita tokens OIDC da branch <code>main</code> deste repositório; papéis restritos ao ACR e ao grupo de recursos.</td></tr>
+  <tr><td>Log Analytics <code>log-vigiavia-prod</code></td><td>Logs da plataforma e do container (stdout/stderr), retenção de 30 dias e teto de 1 GB/dia (controle de custo).</td></tr>
+  <tr><td>Storage <code>sttfvigiavia64dba1</code> (outro grupo)</td><td>State remoto do Terraform: autenticação Entra ID, chave compartilhada desligada, TLS 1.2, sem acesso público, versionamento e exclusão reversível por 14 dias.</td></tr>
+  <tr><td>GitHub Actions</td><td>Pipeline DevSecOps: portões de segurança em todo push; publicação e deploy só a partir da <code>main</code>.</td></tr>
+  <tr><td>Prometheus + Grafana</td><td>Rodam na máquina da equipe, presos a <code>127.0.0.1</code>, coletando o MVP publicado via HTTPS a cada 15 s (Bearer token). O mesmo conjunto sobe com <code>docker compose --profile observabilidade</code>.</td></tr>
+</table>
+<p>Tudo fica em <b>Brazil South</b> (São Paulo): os dados não saem do país, o que simplifica a LGPD (sem transferência internacional, art. 33) e reduz a latência para o cidadão.</p>
+
+<h2>3. Container e stack local</h2>
+<div class="duas">
+<div>
+<h3>Dockerfile (imagem de produção)</h3>
+<ul>
+  <li><b>Multi-stage</b>: o estágio <code>dependencias</code> instala os pacotes; a imagem final recebe só o resultado, o código, as configurações e o modelo <code>.onnx</code>.</li>
+  <li><b>Base enxuta</b> <code>python:3.12-slim-bookworm</code> com <code>apt-get upgrade</code> (correções do SO) e <b>sem PyTorch</b>: a inferência usa ONNX Runtime. Imagem de <b>174 MB</b> comprimida no ACR.</li>
+  <li><b>Não root</b>: usuário <code>vigia</code> (UID 10001, sem shell) e <code>USER 10001</code>; <code>/dados</code> é o único diretório gravável.</li>
+  <li><b>Sem segredos</b>: o <code>METRICS_TOKEN</code> entra só em tempo de execução (segredo do Container App); o <code>.dockerignore</code> exclui <code>.env</code>, <code>*.tfvars</code>, <code>infra/</code>, <code>.git</code> e testes.</li>
+  <li><code>HEALTHCHECK</code> em <code>/health</code>; uvicorn com <code>--proxy-headers</code> e <code>--no-server-header</code>.</li>
+  <li>O commit entra como <code>ARG COMMIT</code> e aparece no <code>/health</code>: o smoke test prova que a versão nova está no ar.</li>
+</ul>
+</div>
+<div>
+<h3>docker compose (API + Prometheus + Grafana)</h3>
+<ul>
+  <li>API com sistema de arquivos <b>somente leitura</b> (<code>read_only</code>, <code>tmpfs /tmp</code>), <code>cap_drop: [ALL]</code>, <code>no-new-privileges</code> e limite de 1 GB de memória.</li>
+  <li><code>METRICS_TOKEN</code> obrigatório e lido do <code>.env</code> (fora do git); senha do Grafana idem.</li>
+  <li>Prometheus e Grafana <b>presos a 127.0.0.1</b>: as interfaces administrativas nunca ficam expostas na rede.</li>
+  <li>Dashboard e alertas versionados como código (<code>observabilidade/</code>), provisionados automaticamente.</li>
+  <li>O job <b>“Stack docker compose”</b> do pipeline sobe a stack completa em todo push e só passa se o Prometheus estiver coletando a API (<code>up == 1</code>).</li>
+</ul>
+</div>
+</div>
+<p>Na própria aplicação: limite de 8 MB e 40 MP por imagem, a imagem enviada para detecção <b>é descartada</b> após a resposta, e todas as respostas levam cabeçalhos de segurança (CSP restritiva, HSTS, <code>X-Content-Type-Options: nosniff</code>, <code>X-Frame-Options: DENY</code>, <code>Permissions-Policy</code>). O <code>/metrics</code> exige <i>Bearer token</i> comparado em tempo constante (<code>hmac.compare_digest</code>).</p>
+
+<h2>4. Infraestrutura como código (Terraform)</h2>
+<table>
+  <tr><th style="width:26%">Requisito</th><th>Como foi atendido</th></tr>
+  <tr><td>Tudo em código</td><td><code>infra/main.tf</code> cria grupo de recursos, Log Analytics, ACR, identidades gerenciadas, RBAC, ambiente e app do Container Apps e a credencial federada do GitHub. Provedores fixados (<code>azurerm 4.81.0</code>, <code>random 3.9.1</code>). O drift detectado (perfil de carga “Consumption” que o Azure adiciona) foi declarado no código.</td></tr>
+  <tr><td>State fora do repositório</td><td>Backend <code>azurerm</code> no Storage <code>sttfvigiavia64dba1</code>, criado por <code>infra/bootstrap/criar_backend.sh</code>: acesso por Entra ID (<code>use_azuread_auth</code>), <b>chave compartilhada desligada</b>, versionamento e retenção de exclusão. O <code>backend.hcl</code> é gerado localmente e ignorado pelo git.</td></tr>
+  <tr><td><code>.tfvars</code> fora do repositório</td><td><code>terraform.tfvars</code> (assinatura e <code>metrics_token</code>) é gerado por <code>scripts/preparar_segredos.py</code> e está no <code>.gitignore</code> (<code>*.tfvars</code>, <code>*.tfstate*</code>, <code>*.tfplan</code>, <code>backend.hcl</code>, <code>.env</code>). A variável do token é <code>sensitive</code>.</td></tr>
+  <tr><td>Porta admin nunca aberta a 0.0.0.0/0</td><td>Não há VM nem porta administrativa: o único ponto de entrada é o ingress HTTPS (<code>allow_insecure_connections = false</code>, sem portas adicionais). A operação acontece pelo plano de controle do Azure, autenticado e auditado. O Trivy (config) e o Semgrep (<code>p/terraform</code>) revisam o Terraform em todo push.</td></tr>
+  <tr><td>Menor privilégio</td><td>ACR sem admin; app com <b>AcrPull</b>; identidade do GitHub com <b>AcrPush</b> só no ACR e <b>Contributor</b> só no grupo <code>rg-vigiavia-prod</code>; credencial federada com <i>subject</i> que usa os IDs imutáveis do dono e do repositório (<code>repo:akiramrt@128194173/vigiavia-mvp@1446365122:ref:refs/heads/main</code>).</td></tr>
+  <tr><td>Revisão humana do apply</td><td>Cada mudança gera um <code>terraform plan -out</code> salvo como evidência (<code>docs/evidencias/terraform_plan_*.txt</code>, sem valores sensíveis); o <code>apply</code> do plano revisado é executado por um integrante.</td></tr>
+</table>
+<pre style="break-inside:auto">## Ingress do Container App: só HTTPS, HTTP inseguro desligado, nenhuma porta administrativa
+{
+  "externo": true,
+  "fqdn": "ca-vigiavia-prod.happywave-0bf5b4c3.brazilsouth.azurecontainerapps.io",
+  "httpInseguroPermitido": false,
+  "portaDoContainer": 8000,
+  "portasAdicionais": null,
+  "transporte": "Http"
+}
+
+## Registro de imagens: usuário admin desligado (acesso só por identidade + RBAC)
+{
+  "acessoPublico": "Enabled",
+  "adminHabilitado": false,
+  "registro": "acrvigiavia2fplg.azurecr.io",
+  "sku": "Basic"
+}
+
+## Identidade federada do GitHub (OIDC): só a branch main deste repositório
+[
+  {
+    "audiencia": "api://AzureADTokenExchange",
+    "emissor": "https://token.actions.githubusercontent.com",
+    "nome": "github-main",
+    "subject": "repo:akiramrt@128194173/vigiavia-mvp@1446365122:ref:refs/heads/main"
+  }
+]
+
+## Papéis da identidade do GitHub (menor privilégio)
+Papel        Escopo
+-----------  -----------------------------------------------------------------------------------------------------------------------------------------------------
+Contributor  /subscriptions/…/resourceGroups/rg-vigiavia-prod
+AcrPush      /subscriptions/…/resourceGroups/rg-vigiavia-prod/providers/Microsoft.ContainerRegistry/registries/acrvigiavia2fplg
+
+## State remoto do Terraform (Storage com Entra ID, sem chave compartilhada, versionado)
+{
+  "blobPublico": false,
+  "chaveCompartilhada": false,
+  "conta": "sttfvigiavia64dba1",
+  "somenteHttps": true,
+  "tlsMinimo": "TLS1_2"
+}
+{
+  "retencaoExclusaoDias": 14,
+  "versionamento": true
+}</pre>
+<p class="peq">Trecho de <code>docs/evidencias/azure_configuracao.txt</code> (Azure CLI): ingress só HTTPS e sem portas adicionais, ACR sem admin, OIDC restrito à <code>main</code>, papéis mínimos e state protegido.</p>
+
+<h2>5. Pipeline DevSecOps (GitHub Actions)</h2>
+<p>O workflow <a href="https://github.com/akiramrt/vigiavia-mvp/blob/main/.github/workflows/devsecops.yml"><code>devsecops.yml</code></a> roda em <b>todo push</b> (qualquer branch), em pull requests e sob demanda. Permissões mínimas por padrão (<code>contents: read</code>); <code>id-token: write</code> só nos jobs que falam com o Azure. As actions de terceiros são fixadas pelo <b>SHA do commit</b> (tags podem ser movidas) e o Dependabot acompanha pip, Docker, Actions e Terraform.</p>
+<table>
+  <tr><th style="width:23%">Job / portão</th><th>O que barra</th></tr>
+  <tr><td>Segredos (Gitleaks)</td><td>Segredos em <b>todo o histórico</b> (<code>fetch-depth: 0</code>) — apagar a linha num commit novo não basta. Binário com versão e SHA-256 conferidos.</td></tr>
+  <tr><td>SAST (Semgrep)</td><td>Código inseguro em Python e JavaScript, segredos, Dockerfile e Terraform (<code>p/python p/javascript p/secrets p/dockerfile p/terraform</code>, <code>--error</code>).</td></tr>
+  <tr><td>Testes (pytest)</td><td>Regressões da API: detecção real com o modelo ONNX, deduplicação, validação humana, proteção do <code>/metrics</code>, cabeçalhos.</td></tr>
+  <tr><td>Stack docker compose</td><td>Stack que não sobe ou Prometheus que não coleta a API.</td></tr>
+  <tr><td>Build + Trivy</td><td>Configuração insegura (Dockerfile/Terraform) e vulnerabilidades <b>HIGH/CRITICAL corrigíveis</b> no SO e nas bibliotecas da imagem; gera o SBOM CycloneDX (artefato do run).</td></tr>
+  <tr><td>Push no ACR</td><td>Só a imagem aprovada, só na <code>main</code>, com login OIDC.</td></tr>
+  <tr><td>Deploy + smoke test</td><td><code>az containerapp update</code> com a tag do commit; o smoke test só passa quando o <code>/health</code> público responde com <b>o commit implantado</b>.</td></tr>
+</table>
+<div class="caixa"><b>Segredos.</b> Não existe senha de nuvem no GitHub: o job pede ao GitHub um token OIDC de curta duração e o Entra ID o troca por acesso, porque confia na credencial federada criada pelo Terraform. Os GitHub Secrets guardam só identificadores (<code>AZURE_CLIENT_ID</code>, <code>AZURE_TENANT_ID</code>, <code>AZURE_SUBSCRIPTION_ID</code>, <code>ACR_NOME</code>, <code>ACA_NOME</code>, <code>AZURE_RG</code>); as Variables <code>PUBLICAR_IMAGEM</code> e <code>DEPLOY_HABILITADO</code> ligam a publicação. O único segredo de verdade, o <code>METRICS_TOKEN</code>, vive no <code>.tfvars</code> local e no cofre de segredos do Container App.</div>
+
+<h3>Execução barrada e a corrigida</h3>
+<p><b>Demonstração controlada.</b> O commit <a href="https://github.com/akiramrt/vigiavia-mvp/commit/709a483"><code>709a483</code></a> fixou o <code>python-multipart</code> (o parser dos uploads de imagem do cidadão) na versão antiga 0.0.17. Os testes passaram (a funcionalidade não muda), mas o Trivy encontrou <b>4 vulnerabilidades HIGH</b> na imagem, entre elas a CVE-2024-53981 (negação de serviço pelo <i>boundary</i> do multipart) e a CVE-2026-24486 (escrita arbitrária de arquivo por <i>path traversal</i>). O run <a href="https://github.com/akiramrt/vigiavia-mvp/actions/runs/41953686302">41953686302</a> parou no job “Build + Trivy”: a imagem não foi publicada, o deploy foi pulado e a produção continuou no commit anterior (<code>cd0c523</code>, conferido no <code>/health</code>).</p>
+<figure><img src="../evidencias/img/gh_run_barrado.png" alt="Run barrado"><figcaption>Figura 2 — Run 41953686302: Gitleaks, Semgrep, pytest e compose passaram; o Trivy barrou a imagem e o deploy foi pulado.</figcaption></figure>
+<div style='break-inside:avoid'><table><tr><th>Biblioteca</th><th>CVE</th><th>Severidade</th><th>Instalada</th><th>Corrigida em</th><th>Descrição (Trivy)</th></tr><tr><td>python-multipart</td><td><a href='https://avd.aquasec.com/nvd/cve-2024-53981'>CVE-2024-53981</a></td><td class='no'>HIGH</td><td>0.0.17</td><td>0.0.18</td><td>python-multipart has a DoS via deformation `multipart/form-data` boundary</td></tr><tr><td>python-multipart</td><td><a href='https://avd.aquasec.com/nvd/cve-2026-24486'>CVE-2026-24486</a></td><td class='no'>HIGH</td><td>0.0.17</td><td>0.0.22</td><td>Arbitrary file write via path traversal vulnerability</td></tr><tr><td>python-multipart</td><td><a href='https://avd.aquasec.com/nvd/cve-2026-42561'>CVE-2026-42561</a></td><td class='no'>HIGH</td><td>0.0.17</td><td>0.0.27</td><td>Denial of Service via excessive multipart part headers</td></tr><tr><td>python-multipart</td><td><a href='https://avd.aquasec.com/nvd/cve-2026-53539'>CVE-2026-53539</a></td><td class='no'>HIGH</td><td>0.0.17</td><td>0.0.30</td><td>Denial of Service via crafted form-urlencoded bodies</td></tr></table><pre>Python (python-pkg)
+Total: 4 (HIGH: 4, CRITICAL: 0)
+##[error]Process completed with exit code 1.   → push no ACR e deploy NÃO executados</pre></div>
+<p>A correção (<a href="https://github.com/akiramrt/vigiavia-mvp/commit/91f8225"><code>91f8225</code></a>) voltou para a versão 0.0.33. O run <a href="https://github.com/akiramrt/vigiavia-mvp/actions/runs/41954209587">41954209587</a> passou por todos os portões, publicou a imagem no ACR e fez o deploy automático; o smoke test confirmou o commit novo no ar.</p>
+<figure><img src="../evidencias/img/gh_run_corrigido.png" alt="Run corrigido"><figcaption>Figura 3 — Run 41954209587: todos os portões verdes, deploy no Azure Container Apps e smoke test.</figcaption></figure>
+<pre>Revisao  Imagem  Saude  Estado
+------------------------  ---------------------------------------------------------------------------------  -------  --------
+***--latest  ***.azurecr.io/vigiavia-mvp:91f82257712cb1de99f06fb4bc9dcc6675a955c6  None  Running
+{"status":"ok","versao":"1.1.0","commit":"91f82257712cb1de99f06fb4bc9dcc6675a955c6","modelo":"vigiavia_buracos","limiar_confianca":0.305}
+MVP no ar com o commit 91f82257712cb1de99f06fb4bc9dcc6675a955c6: https://***.happywave-0bf5b4c3.brazilsouth.azurecontainerapps.io</pre>
+<p class="peq">Log do job de deploy: os <code>***</code> são valores de GitHub Secrets (nome do app e do registro) mascarados automaticamente pelo Actions.</p>
+<figure><img src="../evidencias/img/gh_actions_historico.png" alt="Histórico do pipeline"><figcaption>Figura 4 — Histórico do pipeline: no topo, a sequência deploy → barrado → corrigido; no meio, PRs do Dependabot que propunham Python 3.15 e foram barrados; abaixo, os ajustes iniciais do próprio pipeline (seção 9).</figcaption></figure>
+
+<h2>6. Observabilidade — os quatro sinais de ouro</h2>
+<p>A API exporta métricas Prometheus próprias (<code>http_requests_total{method,rota,status}</code>, histograma <code>http_request_duration_seconds</code>, <i>gauge</i> <code>http_requests_em_andamento</code>, <code>vigiavia_inferencia_segundos</code>, <code>vigiavia_buracos_detectados_total</code>, <code>vigiavia_relatos_total</code>) além das métricas de processo (CPU e memória). O rótulo <code>rota</code> usa o <b>modelo da rota</b> (ex.: <code>/v1/relatos/{rid}</code>), nunca o caminho bruto: sem explosão de cardinalidade e sem dado pessoal em métrica.</p>
+<table>
+  <tr><th style="width:15%">Sinal</th><th>Consulta (PromQL) no dashboard</th><th style="width:27%">Alerta</th></tr>
+  <tr><td><b>Latência</b></td><td><code>histogram_quantile(0.95, sum by (le) (rate(http_request_duration_seconds_bucket{rota="/v1/deteccoes"}[5m])))</code> + p50/p95/p99 por minuto</td><td><code>VigiaViaLatenciaAlta</code>: p95 da detecção &gt; 1 s por 1 min</td></tr>
+  <tr><td><b>Tráfego</b></td><td><code>sum by (rota) (rate(http_requests_total[1m]))</code></td><td>—</td></tr>
+  <tr><td><b>Erros</b></td><td><code>sum(rate(http_requests_total{status=~"5.."}[1m])) / sum(rate(http_requests_total[1m]))</code> (e 4xx)</td><td><code>VigiaViaErros5xx</code>: &gt; 5% por 2 min</td></tr>
+  <tr><td><b>Saturação</b></td><td><code>http_requests_em_andamento</code>, <code>rate(process_cpu_seconds_total[1m])</code> (limite: 0,5 vCPU) e memória residente (limite: 1 GiB)</td><td><code>VigiaViaSaturada</code>: ≥ 6 requisições em andamento por 1 min</td></tr>
+  <tr><td>Disponibilidade</td><td><code>up</code> do alvo publicado</td><td><code>VigiaViaForaDoAr</code>: <code>up == 0</code> por 1 min</td></tr>
+</table>
+<p><b>Como foi medido.</b> O Prometheus da equipe (127.0.0.1) coleta <code>https://…azurecontainerapps.io/metrics</code> a cada 15 s com o token em arquivo (<code>credentials_file</code>). Para provocar os sinais, <code>scripts/gerar_carga.py</code> disparou 16 clientes simultâneos por 7 minutos (85% <code>POST /v1/deteccoes</code> com imagens reais de amostra e 15% <code>GET /v1/relatos</code>) contra o MVP publicado. Resultado do gerador: <b>3.498 requisições em 420 s (8,3 req/s), 99,9% respondidas com sucesso, latência p50 de 1,93 s e p95 de 2,66 s</b>. O primeiro alerta disparou aos 114 s de carga. No momento dos prints, o Prometheus mostrava em <b>FIRING</b>: <code>VigiaViaLatenciaAlta</code> (valor 1,92 s).</p>
+<figure><img src="../evidencias/img/grafana_sinais_de_ouro.png" alt="Dashboard Grafana"><figcaption>Figura 5 — Dashboard “VigiaVia — sinais de ouro” (Grafana) com duas rodadas de carga contra o MVP publicado: 10 clientes (até 23:19:30) e 16 clientes (a partir de 23:21:40). O intervalo sem dados entre elas inclui a troca de revisão do deploy automático.</figcaption></figure>
+<figure><img src="../evidencias/img/prometheus_alertas.png" alt="Alertas Prometheus"><figcaption>Figura 6 — Prometheus durante a carga: <code>VigiaViaLatenciaAlta</code> em FIRING (p95 = 1,92 s) e <code>VigiaViaSaturada</code> em PENDING (7 requisições em andamento).</figcaption></figure>
+<p><b>Leitura.</b> Com 1 réplica de 0,5 vCPU a detecção satura em cerca de 8,3 req/s: a CPU encosta no limite, a fila chega a 15 requisições em andamento, o p95 passa de 1 s e o alerta de latência dispara — sem nenhum 5xx registrado pela API. O dashboard também revelou um efeito colateral real: às 23:23, cerca de 90 s após o início da rodada de 16 clientes, o processo reiniciou (métrica <code>process_start_time_seconds</code>, queda no tráfego). O tempo coincide com 3 falhas seguidas da <i>liveness probe</i>, que checa o <code>/health</code> a cada 30 s com timeout de 1 s, enquanto a CPU estava saturada. As requisições em curso foram encerradas — daí os 0,1% de falhas no gerador. Próximos passos, já com o diagnóstico: timeout de 5 s nas probes e escala horizontal por requisições concorrentes (regra HTTP do Container Apps), o cenário “Cidade” da seção 8.</p>
+<p class="peq">Observação: nesta máquina o Docker Desktop não iniciou (WSL desativado), então Prometheus e Grafana rodaram como binários nativos com os <b>mesmos arquivos de configuração</b> do repositório, presos a 127.0.0.1; a stack em contêineres é validada pelo job de compose a cada push.</p>
+
+<h2 style="break-before:page">7. Segurança, responsabilidade compartilhada e LGPD</h2>
+<h3>Modelo de responsabilidade compartilhada (PaaS / contêiner serverless)</h3>
+<table>
+  <tr><th style="width:33%">Microsoft (provedor)</th><th style="width:33%">Compartilhado</th><th>Equipe VigiaVia (cliente)</th></tr>
+  <tr><td>Data centers, hardware, rede física, hipervisor e sistema dos hosts; plano de controle e orquestração do Container Apps; disponibilidade e correções da plataforma; certificado e terminação TLS do ingress; criptografia em repouso padrão do Storage e do ACR; serviço do Entra ID.</td>
+      <td>Identidade (o Entra ID fornece; nós configuramos identidades, RBAC e a federação OIDC); rede (a plataforma isola; nós decidimos o que é exposto — só HTTPS); logs (a plataforma coleta; nós definimos retenção, acesso e custo).</td>
+      <td>Código e dependências; imagem base e suas correções (rebuild + Trivy); configuração do container (não root, probes, limites); segredos (<code>METRICS_TOKEN</code>, state); IaC e proteção do state; cadeia de CI/CD (actions fixadas, OIDC); dados dos cidadãos (classificação, minimização, retenção, LGPD); monitoramento e resposta a alertas.</td></tr>
+</table>
+<h3>Onde moram os dados pessoais (LGPD)</h3>
+<table>
+  <tr><th style="width:21%">Dado</th><th style="width:27%">Onde fica</th><th>Tratamento e retenção</th></tr>
+  <tr><td>Imagem enviada para detecção (pode conter rostos e placas)</td><td>Só na memória do container, durante a requisição</td><td><b>Não é armazenada</b>: descartada após a resposta. Também é possível detectar <b>no próprio navegador</b> (onnxruntime-web), sem enviar a imagem.</td></tr>
+  <tr><td>Relato: latitude/longitude, severidade, data/hora e recorte da via</td><td>SQLite em <code>/dados</code> no container do Azure Container Apps (Brazil South)</td><td>Minimização: só o recorte do buraco (JPEG ≤ 200 KB validado), sem identificação do cidadão. A localização pode revelar onde alguém estava — por isso não há login, nome nem identificador de aparelho. No MVP o disco é efêmero (dados recriados a cada revisão); em produção: banco gerenciado em Brazil South com criptografia, backup e política de retenção (ex.: 12 meses após o reparo).</td></tr>
+  <tr><td>Endereço IP do cliente nos logs de acesso</td><td>Log Analytics <code>log-vigiavia-prod</code> (Brazil South)</td><td>Dado pessoal para fins de segurança; retenção de <b>30 dias</b>, acesso restrito por RBAC, teto de 1 GB/dia.</td></tr>
+  <tr><td>Métricas</td><td>Prometheus da equipe</td><td>Sem dado pessoal: rótulos só de método, modelo de rota e status.</td></tr>
+  <tr><td>Segredos e state do Terraform</td><td>Storage privado (Entra ID) e cofre do Container App</td><td>Não são dados pessoais, mas o state contém o token: nunca vai para o git; versionado e com acesso só por identidade.</td></tr>
+</table>
+<p>Base legal: execução de políticas públicas pela administração (LGPD, art. 7º, III, e art. 23), com transparência ao cidadão (finalidade: zeladoria de vias). A validação humana na fila da zeladoria evita decisões automatizadas sobre o cidadão.</p>
+
+<h2>8. Estimativa de custo</h2>
+<p>Calculada por <code>scripts/estimar_custo.py</code> com a <b>Azure Retail Prices API</b> (Brazil South, preços de varejo em USD) e a <b>PTAX do Banco Central</b> de 04/11/2026 (R$ 5,4778). Resultado em <a href="https://github.com/akiramrt/vigiavia-mvp/blob/main/docs/custos.json"><code>docs/custos.json</code></a>.</p>
+<div style='break-inside:avoid'><table><tr><th>Item (Brazil South)</th><th>MVP (1 réplica 0,5 vCPU / 1 GiB, 5% ativa)</th><th>Cidade (4 réplicas 1 vCPU / 2 GiB, 40% ativas)</th></tr><tr><td>Container Apps — vCPU ativa</td><td>US$ 0,00</td><td>US$ 96,60</td></tr><tr><td>Container Apps — vCPU ociosa</td><td>US$ 3,74</td><td>US$ 18,92</td></tr><tr><td>Container Apps — memória</td><td>US$ 6,80</td><td>US$ 61,99</td></tr><tr><td>Container Apps — requisições</td><td>US$ 0,00</td><td>US$ 7,20</td></tr><tr><td>Container Registry Basic</td><td>US$ 5,06</td><td>US$ 5,06</td></tr><tr><td>Log Analytics (ingestão)</td><td>US$ 0,00</td><td>US$ 0,00</td></tr><tr><td>Storage do state (Terraform)</td><td>US$ 0,00</td><td>US$ 0,00</td></tr><tr><th>Total mensal</th><th>US$ 15,61 · R$ 85,53</th><th>US$ 189,77 · R$ 1.039,54</th></tr><tr><td>Requisições/mês consideradas</td><td>300.000</td><td>20.000.000</td></tr></table></div>
+<p>O MVP custa cerca de <b>US$ 15,61/mês (R$ 85,53)</b> e cabe no crédito do Azure for Students. Os maiores itens são a réplica sempre ligada (sem <i>cold start</i>) e o ACR Basic. As franquias mensais gratuitas do Container Apps (vCPU-s, GiB-s e 2 milhões de requisições) e os 5 GB de ingestão do Log Analytics zeram os demais itens. Na escala de cidade (4 réplicas de 1 vCPU / 2 GiB, 20 milhões de requisições/mês) o custo vai a <b>US$ 189,77/mês (R$ 1.039,54)</b>.</p>
+
+<h2>9. Problemas reais encontrados e como foram resolvidos</h2>
+<table>
+  <tr><th style="width:30%">Problema</th><th>Causa e solução</th></tr>
+  <tr><td>Login OIDC falhava (<code>AADSTS700213</code>)</td><td>O GitHub passou a emitir o claim <code>sub</code> com IDs imutáveis (<code>repo:dono@id/repo@id:ref:…</code>). O <i>subject</i> virou variável do Terraform com esse formato — o que ainda impede que um repositório recriado com o mesmo nome herde o acesso.</td></tr>
+  <tr><td>Container App falhava: “Artifact app provisioning failed”</td><td>O BuildKit cria por padrão um índice OCI com atestação de plataforma <code>unknown/unknown</code>, que o Container Apps não aceita. Build com <code>BUILDX_NO_DEFAULT_ATTESTATIONS=1</code>; a rastreabilidade continua no SBOM CycloneDX.</td></tr>
+  <tr><td>Deploy com <code>environment:</code> quebraria o OIDC</td><td>Com um <i>environment</i> o <code>sub</code> vira <code>…:environment:&lt;nome&gt;</code>. O job de deploy roda sem ele, e a credencial federada continua confiando só na <code>main</code>.</td></tr>
+  <tr><td>Action do Trivy “não encontrada”</td><td>A tag usada deixou de existir (as tags passaram a ter prefixo <code>v</code>). Todas as actions foram fixadas por SHA — tags são mutáveis e já foram vetor de ataque à cadeia de suprimentos.</td></tr>
+  <tr><td>Gitleaks falhava no primeiro push</td><td>A action varria um intervalo <code>commit^..</code> inexistente no commit raiz. Troca pelo binário (versão e SHA-256 fixados) varrendo o histórico completo.</td></tr>
+  <tr><td>Drift no ambiente do Container Apps</td><td>O Azure adiciona o perfil “Consumption” e o plano queria recriar o ambiente. O perfil foi declarado no Terraform (o código continua sendo a fonte da verdade).</td></tr>
+  <tr><td>Job de compose intermitente</td><td>Prometheus e Grafana não têm <code>HEALTHCHECK</code>; o teste batia antes de aceitarem conexões. <code>curl --retry --retry-all-errors</code>.</td></tr>
+</table>
+
+<h2>10. Como reproduzir</h2>
+<pre># 1) Local (Docker): a mesma stack do pipeline
+python scripts/preparar_segredos.py              # .env e token do Prometheus (fora do git)
+docker compose up -d --build                     # API em http://localhost:8000
+docker compose --profile observabilidade up -d   # + Prometheus :9090 e Grafana :3000 (só 127.0.0.1)
+
+# 2) Portões de segurança na máquina (os mesmos do pipeline)
+pip install -r requirements-dev.txt &amp;&amp; pytest -q
+gitleaks git . &amp;&amp; trivy config . &amp;&amp; semgrep scan --config p/python --config p/secrets --error
+
+# 3) Nuvem, uma vez: state remoto, variáveis fora do git, plano revisado por uma pessoa
+az login &amp;&amp; bash infra/bootstrap/criar_backend.sh brazilsouth
+python scripts/preparar_segredos.py --subscription &lt;assinatura&gt;   # infra/terraform.tfvars
+cd infra &amp;&amp; terraform init -backend-config=backend.hcl &amp;&amp; terraform plan -out=plano.tfplan
+terraform apply plano.tfplan
+powershell -File ..\scripts\configurar_github.ps1 -HabilitarDeploy   # GitHub Secrets/Variables (OIDC)
+
+# 4) Daí em diante: git push na main = portões de segurança + deploy automático + smoke test</pre>
+<p>Passo a passo completo, com a ficha técnica, no <a href="https://github.com/akiramrt/vigiavia-mvp#readme">README</a>. Telas do MVP publicado:</p>
+<div class="duas">
+<figure><img src="../evidencias/img/mvp_cidadao.png" alt="MVP cidadão"><figcaption>Figura 7 — Visão do cidadão: detecção de buraco numa imagem de exemplo.</figcaption></figure>
+<figure><img src="../evidencias/img/mvp_zeladoria.png" alt="MVP zeladoria"><figcaption>Figura 8 — Visão da zeladoria: fila priorizada e mapa dos relatos.</figcaption></figure>
+</div>
+
+<h2>11. Conclusão</h2>
+<p>O VigiaVia está no ar em <a href="https://ca-vigiavia-prod.happywave-0bf5b4c3.brazilsouth.azurecontainerapps.io">https://ca-vigiavia-prod.happywave-0bf5b4c3.brazilsouth.azurecontainerapps.io</a> e só chega lá passando por portões automáticos: nenhum segredo no histórico, nenhum padrão inseguro no código, testes e stack funcionando, nenhuma vulnerabilidade HIGH/CRITICAL corrigível na imagem. A demonstração mostrou o ponto central do DevSecOps: uma mudança que <b>passa nos testes</b> pode ser <b>perigosa</b>, e foi o portão de segurança — não uma revisão manual — que impediu a imagem vulnerável de chegar ao cidadão. A infraestrutura é reproduzível por código, sem senhas de nuvem e sem portas administrativas, e a observabilidade mostrou, com carga real, onde o serviço satura e quando precisa escalar.</p>
+
+</body>
+</html>
