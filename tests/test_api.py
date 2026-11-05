@@ -87,3 +87,27 @@ def test_metricas_exigem_token(cliente):
     r = cliente.get("/metrics", headers={"Authorization": "Bearer token-de-teste"})
     assert r.status_code == 200
     assert "http_request_duration_seconds" in r.text and "http_requests_total" in r.text
+
+
+def test_health_responde_durante_inferencia_lenta(cliente, monkeypatch):
+    """Regressão do teste de carga: a inferência não pode bloquear o event loop. Antes, com a CPU saturada,
+    o /health (usado pela liveness probe) esperava atrás das detecções e o container era reiniciado."""
+    import threading
+    import time
+
+    import api.main as m
+
+    def lenta(img, conf=None):
+        time.sleep(1.5)                                  # simula a CPU saturada
+        return []
+
+    monkeypatch.setattr(m.ESTADO["detector"], "detectar", lenta)
+    preta = _jpg(np.zeros((64, 64, 3), np.uint8))
+    t = threading.Thread(target=lambda: cliente.post("/v1/deteccoes", files={"imagem": ("p.jpg", preta, "image/jpeg")}))
+    t.start()
+    time.sleep(0.3)                                      # a detecção já está em andamento
+    t0 = time.perf_counter()
+    assert cliente.get("/health").status_code == 200
+    espera = time.perf_counter() - t0
+    t.join()
+    assert espera < 0.5, f"/health esperou {espera:.2f} s atrás da inferência"

@@ -131,18 +131,26 @@ resource "azurerm_container_app" "app" {
         value = "true"
       }
 
+      # No teste de carga (16 clientes, CPU no limite de 0,5 vCPU) o /health passou do timeout padrão de 1 s
+      # e a liveness reiniciou o container. 5 s dá folga sem esconder um processo travado: o reinício só
+      # acontece após 3 falhas seguidas (~90 s).
       liveness_probe {
-        transport        = "HTTP"
-        port             = 8000
-        path             = "/health"
-        initial_delay    = 10
-        interval_seconds = 30
+        transport               = "HTTP"
+        port                    = 8000
+        path                    = "/health"
+        initial_delay           = 10
+        interval_seconds        = 30
+        timeout                 = 5
+        failure_count_threshold = 3
       }
+      # Com 1 réplica, uma readiness reprovada tira o app do balanceamento (503 no ingress): mesmo timeout.
       readiness_probe {
-        transport        = "HTTP"
-        port             = 8000
-        path             = "/health"
-        interval_seconds = 10
+        transport               = "HTTP"
+        port                    = 8000
+        path                    = "/health"
+        interval_seconds        = 10
+        timeout                 = 5
+        failure_count_threshold = 3
       }
     }
   }

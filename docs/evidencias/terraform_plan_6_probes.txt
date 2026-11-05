@@ -1,0 +1,76 @@
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  ~ update in-place
+
+Terraform will perform the following actions:
+
+  # azurerm_container_app.app will be updated in-place
+  ~ resource "azurerm_container_app" "app" {
+        id                            = "/subscriptions/cf0fbc8c-b1cc-4ccd-8ad9-ecfd099006c8/resourceGroups/rg-vigiavia-prod/providers/Microsoft.App/containerApps/ca-vigiavia-prod"
+        name                          = "ca-vigiavia-prod"
+        tags                          = {
+            "ambiente"   = "producao"
+            "disciplina" = "Secure DevOps Tools & Cloud Computing"
+            "gerenciado" = "terraform"
+            "projeto"    = "VigiaVia"
+        }
+        # (10 unchanged attributes hidden)
+
+      ~ ingress {
+          ~ transport                  = "http" -> "auto"
+            # (7 unchanged attributes hidden)
+
+          + traffic_weight {
+              + latest_revision = true
+              + percentage      = 100
+            }
+        }
+
+      ~ template {
+          ~ cooldown_period_in_seconds       = 0 -> 300
+          ~ polling_interval_in_seconds      = 0 -> 30
+            # (4 unchanged attributes hidden)
+
+          ~ container {
+                name              = "api"
+                # (6 unchanged attributes hidden)
+
+              ~ liveness_probe {
+                  ~ timeout                          = 1 -> 5
+                  + transport                        = "HTTP"
+                    # (7 unchanged attributes hidden)
+                }
+
+              ~ readiness_probe {
+                  ~ timeout                 = 1 -> 5
+                  + transport               = "HTTP"
+                    # (7 unchanged attributes hidden)
+                }
+
+                # (3 unchanged blocks hidden)
+            }
+        }
+
+        # (3 unchanged blocks hidden)
+    }
+
+Plan: 0 to add, 1 to change, 0 to destroy.
+
+Warning: Argument is deprecated
+
+  with azurerm_federated_identity_credential.github_main,
+  on main.tf line 178, in resource "azurerm_federated_identity_credential" "github_main":
+ 178:   resource_group_name = azurerm_resource_group.rg.name
+
+This field is no longer used and will be removed in the next major version of
+the Azure Provider
+
+(and one more similar warning elsewhere)
+
+─────────────────────────────────────────────────────────────────────────────
+
+Saved the plan to: probes.tfplan
+
+To perform exactly these actions, run the following command to apply:
+    terraform apply "probes.tfplan"
+Releasing state lock. This may take a few moments...

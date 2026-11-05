@@ -72,3 +72,9 @@ AcrPush      /subscriptions/cf0fbc8c-b1cc-4ccd-8ad9-ecfd099006c8/resourceGroups/
   "retencaoExclusaoDias": 14,
   "versionamento": true
 }
+
+## Probes do container (após o ajuste de 05/11: timeout de 5 s)
+Tipo       Caminho    IntervaloSeg    TimeoutSeg    FalhasParaAgir
+---------  ---------  --------------  ------------  ----------------
+Liveness   /health    30              5             3
+Readiness  /health    10              5             3

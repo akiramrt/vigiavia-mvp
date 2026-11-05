@@ -32,6 +32,7 @@ from typing import Literal
 
 import cv2
 import numpy as np
+from anyio import CapacityLimiter, to_thread
 from fastapi import FastAPI, File, HTTPException, Query, Request, UploadFile
 from fastapi.responses import FileResponse, PlainTextResponse, Response
 from fastapi.staticfiles import StaticFiles
@@ -114,6 +115,8 @@ async def ciclo_de_vida(app: FastAPI):
     det = DetectorONNX(config.pesos_padrao(), conf=config.conf_padrao())
     det.detectar(np.zeros((640, 640, 3), np.uint8))           # aquece o modelo
     ESTADO["detector"] = det
+    # no máximo N inferências ao mesmo tempo; as demais esperam a vez sem gastar CPU (0,5 vCPU no Azure)
+    ESTADO["limite_inferencias"] = CapacityLimiter(int(os.getenv("VIGIAVIA_INFERENCIAS_SIMULTANEAS", "2")))
     if os.getenv("VIGIAVIA_SEMEAR_DEMO", "true").lower() == "true":
         _semear_demo(det)
     yield
@@ -268,23 +271,35 @@ def modelo() -> dict:
             "zona_trajetoria": ZONA_TRAJETORIA}
 
 
+def _decodificar_e_detectar(dados: bytes, conf: float | None):
+    """Trabalho pesado de CPU (decodificação + inferência ONNX). Roda numa thread de trabalho, FORA do event
+    loop: assim o /health (liveness probe) e o /metrics continuam respondendo com a CPU saturada.
+    No teste de carga do MVP publicado, rodar isto direto na rota async travava o event loop e o Azure
+    reiniciava o container por falha da liveness probe."""
+    img = cv2.imdecode(np.frombuffer(dados, np.uint8), cv2.IMREAD_COLOR)
+    if img is None or img.shape[0] * img.shape[1] > MAX_PIXELS:
+        return None
+    altura, largura = img.shape[:2]
+    t0 = time.perf_counter()
+    caixas = ESTADO["detector"].detectar(img, conf=conf)
+    return caixas, altura, largura, time.perf_counter() - t0  # a imagem morre aqui (LGPD: minimização)
+
+
 @app.post("/v1/deteccoes", response_model=RespostaDeteccao)
 async def detectar(imagem: UploadFile = File(...),
                    conf: float | None = Query(default=None, ge=0.01, le=0.99)) -> RespostaDeteccao:
     dados = await imagem.read(TAM_MAX_IMAGEM + 1)
     if len(dados) > TAM_MAX_IMAGEM:
         raise HTTPException(413, "Imagem maior que 8 MB")
-    img = cv2.imdecode(np.frombuffer(dados, np.uint8), cv2.IMREAD_COLOR)
-    if img is None or img.shape[0] * img.shape[1] > MAX_PIXELS:
+    resultado = await to_thread.run_sync(_decodificar_e_detectar, dados, conf,
+                                         limiter=ESTADO.get("limite_inferencias"))
+    del dados                                                 # nada é persistido (LGPD: minimização)
+    if resultado is None:
         raise HTTPException(422, "Arquivo não é uma imagem válida (ou é grande demais)")
+    caixas, altura, largura, dt = resultado
     det: DetectorONNX = ESTADO["detector"]
-    altura, largura = img.shape[:2]
-    t0 = time.perf_counter()
-    caixas = det.detectar(img, conf=conf)
-    dt = time.perf_counter() - t0
     INFERENCIA.observe(dt)
     DETECCOES.inc(len(caixas))
-    del img, dados                                            # nada é persistido (LGPD: minimização)
     return RespostaDeteccao(modelo=det.nome, limiar_confianca=conf or det.conf, largura=largura, altura=altura,
                             tempo_inferencia_ms=round(dt * 1000, 1), quantidade=len(caixas),
                             deteccoes=[CaixaDetectada(**c.para_dict()) for c in caixas])
