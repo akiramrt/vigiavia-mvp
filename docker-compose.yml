@@ -28,7 +28,7 @@ services:
     command: ["--config.file=/etc/prometheus/prometheus.yml", "--storage.tsdb.retention.time=15d"]
     volumes:
       - ./observabilidade/prometheus:/etc/prometheus:ro
-      - ./observabilidade/segredos:/etc/prometheus/segredos:ro
+      - ./observabilidade/segredos:/etc/segredos:ro   # fora do bind mount somente leitura
       - prometheus:/prometheus
     ports: ["127.0.0.1:9090:9090"]
     restart: unless-stopped

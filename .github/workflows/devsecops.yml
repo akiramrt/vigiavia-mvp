@@ -27,15 +27,19 @@ env:
 
 jobs:
   segredos:
-    name: Segredos (Gitleaks)
+    name: Segredos (Gitleaks — histórico completo)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - uses: gitleaks/gitleaks-action@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Instalar Gitleaks (versão e SHA-256 fixados)
+        run: |
+          curl -sSLo gitleaks.tgz https://github.com/gitleaks/gitleaks/releases/download/v8.30.1/gitleaks_8.30.1_linux_x64.tar.gz
+          echo "551f6fc83ea457d62a0d98237cbad105af8d557003051f41f3e7ca7b3f2470eb  gitleaks.tgz" | sha256sum -c -
+          tar xzf gitleaks.tgz gitleaks
+      - name: Varredura de TODO o histórico (apagar a linha não basta; o segredo fica no histórico)
+        run: ./gitleaks git . --redact --verbose --no-banner
 
   sast:
     name: SAST (Semgrep)
