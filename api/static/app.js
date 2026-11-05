@@ -1,5 +1,5 @@
 /* VigiaVia — interface web do componente de visão computacional.
- * Modo "servidor": cada quadro vai para POST /v1/deteccoes (GPU).
+ * Modo "servidor": cada quadro vai para POST /v1/deteccoes (ONNX Runtime no servidor).
  * Modo "aparelho": o modelo ONNX roda no navegador (onnxruntime-web) e a imagem nunca sai do celular.
  */
 "use strict";

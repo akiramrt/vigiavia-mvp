@@ -81,6 +81,18 @@ python scripts/gerar_carga.py --url https://ca-vigiavia-prod.happywave-0bf5b4c3.
 `python scripts/estimar_custo.py` consulta a Azure Retail Prices API e a PTAX do Banco Central:
 **MVP ≈ US$ 15,61/mês (R$ 85,53)** — coberto pelo crédito do Azure for Students. Detalhes em [`docs/custos.json`](docs/custos.json).
 
+## Evidências
+
+| O quê | Onde |
+|---|---|
+| Deploy automático com todos os portões verdes | [run 41953126657](https://github.com/akiramrt/vigiavia-mvp/actions/runs/41953126657) |
+| **Execução barrada**: o Trivy achou 4 CVEs HIGH no `python-multipart 0.0.17` e o deploy não aconteceu | [run 41953686302](https://github.com/akiramrt/vigiavia-mvp/actions/runs/41953686302) · [trecho do log](docs/evidencias/trivy_execucao_barrada.txt) |
+| **Execução corrigida**: versão 0.0.33, deploy e smoke test conferindo o commit no ar | [run 41954209587](https://github.com/akiramrt/vigiavia-mvp/actions/runs/41954209587) |
+| Azure: ingress só HTTPS, ACR sem admin, OIDC só da `main`, RBAC mínimo, state protegido | [azure_configuracao.txt](docs/evidencias/azure_configuracao.txt) |
+| GitHub Secrets e Variables (só identificadores; nenhuma senha de nuvem) | [github_configuracao.txt](docs/evidencias/github_configuracao.txt) |
+| Planos do Terraform revisados antes de cada `apply` | [docs/evidencias](docs/evidencias) (`terraform_plan_*.txt`) |
+| Dashboard dos sinais de ouro e alerta disparado sob carga | [docs/evidencias/img](docs/evidencias/img) e [relatório (PDF)](docs/relatorio/VigiaVia_Secure_DevOps.pdf) |
+
 ## Segurança e LGPD (resumo)
 
 * **Segredos:** nenhum no código, na imagem ou no state versionado; `METRICS_TOKEN` entra como segredo do Container App;
