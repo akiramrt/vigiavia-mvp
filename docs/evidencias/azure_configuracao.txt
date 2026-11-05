@@ -1,0 +1,74 @@
+# Evidências coletadas pela Azure CLI em 2026-11-04 23:13 (horário de Brasília) — somente identificadores, nenhum segredo
+
+## Recursos do grupo rg-vigiavia-prod (todos criados pelo Terraform)
+Nome                     Tipo                                              Regiao
+-----------------------  ------------------------------------------------  -----------
+id-vigiavia-prod-github  Microsoft.ManagedIdentity/userAssignedIdentities  brazilsouth
+acrvigiavia2fplg         Microsoft.ContainerRegistry/registries            brazilsouth
+id-vigiavia-prod-app     Microsoft.ManagedIdentity/userAssignedIdentities  brazilsouth
+log-vigiavia-prod        Microsoft.OperationalInsights/workspaces          brazilsouth
+cae-vigiavia-prod        Microsoft.App/managedEnvironments                 brazilsouth
+ca-vigiavia-prod         Microsoft.App/containerApps                       brazilsouth
+
+## Ingress do Container App: só HTTPS, HTTP inseguro desligado, nenhuma porta administrativa
+{
+  "externo": true,
+  "fqdn": "ca-vigiavia-prod.happywave-0bf5b4c3.brazilsouth.azurecontainerapps.io",
+  "httpInseguroPermitido": false,
+  "portaDoContainer": 8000,
+  "portasAdicionais": null,
+  "transporte": "Http"
+}
+
+## Revisões ativas (imagem implantada pelo pipeline)
+Revisao                   Imagem                                                                             Saude    Estado
+------------------------  ---------------------------------------------------------------------------------  -------  --------
+ca-vigiavia-prod--latest  acrvigiavia2fplg.azurecr.io/vigiavia-mvp:cd0c523683deeebd09a2baa1e1898e24fec66bac  Healthy  Running
+
+## Segredos do Container App (só o NOME; o valor nunca sai da plataforma)
+metrics-token
+
+## Registro de imagens: usuário admin desligado (acesso só por identidade + RBAC)
+{
+  "acessoPublico": "Enabled",
+  "adminHabilitado": false,
+  "registro": "acrvigiavia2fplg.azurecr.io",
+  "sku": "Basic"
+}
+
+## Imagens publicadas no ACR
+Tag                                       CriadaEm                      Bytes
+----------------------------------------  ----------------------------  ---------
+cd0c523683deeebd09a2baa1e1898e24fec66bac  2026-11-05T02:10:36.1239666Z  174109203
+fc0ead564dec5169dcbec6188710f4ccde8bbad2  2026-11-05T01:50:47.0328278Z  174109434
+e16136a8f5820d57ba019998d7e1ef57959fd1c6  2026-11-05T01:41:43.8489565Z  0
+                                          2026-11-05T01:41:43.3670895Z  1451
+
+## Identidade federada do GitHub (OIDC): só a branch main deste repositório
+[
+  {
+    "audiencia": "api://AzureADTokenExchange",
+    "emissor": "https://token.actions.githubusercontent.com",
+    "nome": "github-main",
+    "subject": "repo:akiramrt@128194173/vigiavia-mvp@1446365122:ref:refs/heads/main"
+  }
+]
+
+## Papéis da identidade do GitHub (menor privilégio)
+Papel        Escopo
+-----------  -----------------------------------------------------------------------------------------------------------------------------------------------------
+Contributor  /subscriptions/cf0fbc8c-b1cc-4ccd-8ad9-ecfd099006c8/resourceGroups/rg-vigiavia-prod
+AcrPush      /subscriptions/cf0fbc8c-b1cc-4ccd-8ad9-ecfd099006c8/resourceGroups/rg-vigiavia-prod/providers/Microsoft.ContainerRegistry/registries/acrvigiavia2fplg
+
+## State remoto do Terraform (Storage com Entra ID, sem chave compartilhada, versionado)
+{
+  "blobPublico": false,
+  "chaveCompartilhada": false,
+  "conta": "sttfvigiavia64dba1",
+  "somenteHttps": true,
+  "tlsMinimo": "TLS1_2"
+}
+{
+  "retencaoExclusaoDias": 14,
+  "versionamento": true
+}

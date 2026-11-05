@@ -1,0 +1,27 @@
+# Run 41953686302 (commit 709a483) — job 'Build + Trivy', passo 'Trivy — vulnerabilidades da imagem'
+# trecho do log (gh run view --log-failed), sem os prefixos de horário
+
+Python (python-pkg)
+===================
+Total: 4 (HIGH: 4, CRITICAL: 0)
+
+┌─────────────────────────────┬────────────────┬──────────┬────────┬───────────────────┬───────────────┬──────────────────────────────────────────────────────────────┐
+│           Library           │ Vulnerability  │ Severity │ Status │ Installed Version │ Fixed Version │                            Title                             │
+├─────────────────────────────┼────────────────┼──────────┼────────┼───────────────────┼───────────────┼──────────────────────────────────────────────────────────────┤
+│ python-multipart (METADATA) │ CVE-2024-53981 │ HIGH     │ fixed  │ 0.0.17            │ 0.0.18        │ python-multipart: python-multipart has a DoS via deformation │
+│                             │                │          │        │                   │               │ `multipart/form-data` boundary                               │
+│                             │                │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2024-53981                   │
+│                             ├────────────────┤          │        │                   ├───────────────┼──────────────────────────────────────────────────────────────┤
+│                             │ CVE-2026-24486 │          │        │                   │ 0.0.22        │ python-multipart: Python-Multipart: Arbitrary file write via │
+│                             │                │          │        │                   │               │ path traversal vulnerability                                 │
+│                             │                │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2026-24486                   │
+│                             ├────────────────┤          │        │                   ├───────────────┼──────────────────────────────────────────────────────────────┤
+│                             │ CVE-2026-42561 │          │        │                   │ 0.0.27        │ python-multipart: python-multipart: Denial of Service via    │
+│                             │                │          │        │                   │               │ excessive multipart part headers                             │
+│                             │                │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2026-42561                   │
+│                             ├────────────────┤          │        │                   ├───────────────┼──────────────────────────────────────────────────────────────┤
+│                             │ CVE-2026-53539 │          │        │                   │ 0.0.30        │ python-multipart: Python-Multipart: Denial of Service via    │
+│                             │                │          │        │                   │               │ crafted form-urlencoded bodies                               │
+│                             │                │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2026-53539                   │
+└─────────────────────────────┴────────────────┴──────────┴────────┴───────────────────┴───────────────┴──────────────────────────────────────────────────────────────┘
+##[error]Process completed with exit code 1.
