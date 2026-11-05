@@ -68,7 +68,7 @@
       <tr><td>Componente de visão computacional</td><td><a href="https://github.com/akiramrt/vigiavia-visao-computacional">github.com/akiramrt/vigiavia-visao-computacional</a></td></tr>
     </table>
   </div>
-  <p class="peq">Entrega única por equipe · relatório gerado em 04/11/2026 · todas as evidências deste documento são reais, coletadas do ambiente publicado (Azure Brazil South), do GitHub Actions e do Prometheus/Grafana.</p>
+  <p class="peq">Entrega única por equipe · relatório gerado em 05/11/2026 · todas as evidências deste documento são reais, coletadas do ambiente publicado (Azure Brazil South), do GitHub Actions e do Prometheus/Grafana.</p>
 </section>
 
 <h2>1. Resumo e matriz de critérios</h2>
@@ -77,7 +77,7 @@
   <tr><th style="width:22%">Critério (peso)</th><th>O que foi entregue</th><th style="width:22%">Evidência</th></tr>
   <tr><td><b>Container &amp; IaC</b> (5,0)</td><td>Dockerfile multi-stage <code>python:3.12-slim</code>, usuário 10001, <code>HEALTHCHECK</code>, nenhum segredo na imagem; stack completa no <code>docker compose</code> (API endurecida + Prometheus + Grafana). Terraform com state remoto no Azure Storage (Entra ID, sem chave), <code>.tfvars</code> e <code>backend.hcl</code> fora do git, ingress somente HTTPS e <b>nenhuma porta administrativa</b>.</td><td>Seções 3 e 4; <code>docs/evidencias/azure_configuracao.txt</code>; planos em <code>docs/evidencias/terraform_plan_*.txt</code></td></tr>
   <tr><td><b>Pipeline DevSecOps</b> (4,0)</td><td>Gitleaks (histórico completo), Semgrep, pytest, validação do compose, Trivy (IaC/Dockerfile e imagem), SBOM; em <b>todo push</b>. Credenciais via <b>OIDC</b> (sem senha de nuvem) e identificadores em GitHub Secrets. Deploy automático da <code>main</code> com smoke test que confere o commit no ar. <b>Execução barrada e a corrigida.</b></td><td>Seção 5; runs <a href="https://github.com/akiramrt/vigiavia-mvp/actions/runs/41953686302">41953686302</a> (barrado) e <a href="https://github.com/akiramrt/vigiavia-mvp/actions/runs/41954209587">41954209587</a> (corrigido)</td></tr>
-  <tr><td><b>Observabilidade</b> (3,0)</td><td>API instrumentada (<code>/metrics</code> protegido por token); Prometheus coletando o MVP publicado via HTTPS; dashboard Grafana como código com latência, tráfego, erros e saturação; 4 regras de alerta; <b>alerta disparado</b> sob carga real.</td><td>Seção 6; prints do Grafana e do Prometheus</td></tr>
+  <tr><td><b>Observabilidade</b> (3,0)</td><td>API instrumentada (<code>/metrics</code> protegido por token); Prometheus coletando o MVP publicado via HTTPS; dashboard Grafana como código com latência, tráfego, erros e saturação; 4 regras de alerta; <b>alerta disparado</b> sob carga real; um reinício sob carga foi diagnosticado até a causa raiz, corrigido e verificado em produção.</td><td>Seção 6; prints do Grafana e do Prometheus</td></tr>
   <tr><td><b>Documentação</b> (2,0)</td><td>Diagrama de arquitetura, responsabilidade compartilhada, onde moram os dados pessoais (LGPD), estimativa de custo com preços oficiais, README reproduzível com a ficha técnica.</td><td>Seções 2, 7, 8, 10 e <a href="https://github.com/akiramrt/vigiavia-mvp#readme">README</a></td></tr>
 </table>
 
@@ -156,6 +156,12 @@
   "transporte": "Http"
 }
 
+## Probes do container (após o ajuste de 05/11: timeout de 5 s)
+Tipo       Caminho    IntervaloSeg    TimeoutSeg    FalhasParaAgir
+---------  ---------  --------------  ------------  ----------------
+Liveness   /health    30              5             3
+Readiness  /health    10              5             3
+
 ## Registro de imagens: usuário admin desligado (acesso só por identidade + RBAC)
 {
   "acessoPublico": "Enabled",
@@ -222,7 +228,7 @@ Total: 4 (HIGH: 4, CRITICAL: 0)
 {"status":"ok","versao":"1.1.0","commit":"91f82257712cb1de99f06fb4bc9dcc6675a955c6","modelo":"vigiavia_buracos","limiar_confianca":0.305}
 MVP no ar com o commit 91f82257712cb1de99f06fb4bc9dcc6675a955c6: https://***.happywave-0bf5b4c3.brazilsouth.azurecontainerapps.io</pre>
 <p class="peq">Log do job de deploy: os <code>***</code> são valores de GitHub Secrets (nome do app e do registro) mascarados automaticamente pelo Actions.</p>
-<figure><img src="../evidencias/img/gh_actions_historico.png" alt="Histórico do pipeline"><figcaption>Figura 4 — Histórico do pipeline: no topo, a sequência deploy → barrado → corrigido; no meio, PRs do Dependabot que propunham Python 3.15 e foram barrados; abaixo, os ajustes iniciais do próprio pipeline (seção 9).</figcaption></figure>
+<figure><img src="../evidencias/img/gh_actions_historico.png" alt="Histórico do pipeline" style="max-width:72%"><figcaption>Figura 4 — Histórico do pipeline: no topo, a sequência deploy → barrado → corrigido; no meio, PRs do Dependabot que propunham Python 3.15 e foram barrados; abaixo, os ajustes iniciais do próprio pipeline (seção 9).</figcaption></figure>
 
 <h2>6. Observabilidade — os quatro sinais de ouro</h2>
 <p>A API exporta métricas Prometheus próprias (<code>http_requests_total{method,rota,status}</code>, histograma <code>http_request_duration_seconds</code>, <i>gauge</i> <code>http_requests_em_andamento</code>, <code>vigiavia_inferencia_segundos</code>, <code>vigiavia_buracos_detectados_total</code>, <code>vigiavia_relatos_total</code>) além das métricas de processo (CPU e memória). O rótulo <code>rota</code> usa o <b>modelo da rota</b> (ex.: <code>/v1/relatos/{rid}</code>), nunca o caminho bruto: sem explosão de cardinalidade e sem dado pessoal em métrica.</p>
@@ -237,17 +243,25 @@ MVP no ar com o commit 91f82257712cb1de99f06fb4bc9dcc6675a955c6: https://***.hap
 <p><b>Como foi medido.</b> O Prometheus da equipe (127.0.0.1) coleta <code>https://…azurecontainerapps.io/metrics</code> a cada 15 s com o token em arquivo (<code>credentials_file</code>). Para provocar os sinais, <code>scripts/gerar_carga.py</code> disparou 16 clientes simultâneos por 7 minutos (85% <code>POST /v1/deteccoes</code> com imagens reais de amostra e 15% <code>GET /v1/relatos</code>) contra o MVP publicado. Resultado do gerador: <b>3.498 requisições em 420 s (8,3 req/s), 99,9% respondidas com sucesso, latência p50 de 1,93 s e p95 de 2,66 s</b>. O primeiro alerta disparou aos 114 s de carga. No momento dos prints, o Prometheus mostrava em <b>FIRING</b>: <code>VigiaViaLatenciaAlta</code> (valor 1,92 s).</p>
 <figure><img src="../evidencias/img/grafana_sinais_de_ouro.png" alt="Dashboard Grafana"><figcaption>Figura 5 — Dashboard “VigiaVia — sinais de ouro” (Grafana) com duas rodadas de carga contra o MVP publicado: 10 clientes (até 23:19:30) e 16 clientes (a partir de 23:21:40). O intervalo sem dados entre elas inclui a troca de revisão do deploy automático.</figcaption></figure>
 <figure><img src="../evidencias/img/prometheus_alertas.png" alt="Alertas Prometheus"><figcaption>Figura 6 — Prometheus durante a carga: <code>VigiaViaLatenciaAlta</code> em FIRING (p95 = 1,92 s) e <code>VigiaViaSaturada</code> em PENDING (7 requisições em andamento).</figcaption></figure>
-<p><b>Leitura.</b> Com 1 réplica de 0,5 vCPU a detecção satura em cerca de 8,3 req/s: a CPU encosta no limite, a fila chega a 15 requisições em andamento, o p95 passa de 1 s e o alerta de latência dispara — sem nenhum 5xx registrado pela API. O dashboard também revelou um efeito colateral real: às 23:23, cerca de 90 s após o início da rodada de 16 clientes, o processo reiniciou (métrica <code>process_start_time_seconds</code>, queda no tráfego). O tempo coincide com 3 falhas seguidas da <i>liveness probe</i>, que checa o <code>/health</code> a cada 30 s com timeout de 1 s, enquanto a CPU estava saturada. As requisições em curso foram encerradas — daí os 0,1% de falhas no gerador. Próximos passos, já com o diagnóstico: timeout de 5 s nas probes e escala horizontal por requisições concorrentes (regra HTTP do Container Apps), o cenário “Cidade” da seção 8.</p>
+<p><b>Leitura.</b> Com 1 réplica de 0,5 vCPU a detecção satura em cerca de 8,3 req/s: a CPU encosta no limite, a fila chega a 15 requisições em andamento, o p95 passa de 1 s e o alerta de latência dispara — sem nenhum 5xx registrado pela API. O dashboard também revelou um efeito colateral real: às 23:23, cerca de 90 s após o início da rodada de 16 clientes, o processo reiniciou (métrica <code>process_start_time_seconds</code>, queda no tráfego) — 0,1% das requisições do gerador falharam.</p>
+<div class="caixa alerta"><b>Do alerta à causa raiz.</b>
+<ol style="margin:3px 0 2px 18px; padding:0">
+  <li><b>Hipótese 1 — timeout da <i>liveness probe</i></b> (1 s, padrão). Subimos para 5 s nas duas probes pelo Terraform (plano revisado em <code>docs/evidencias/terraform_plan_6_probes.txt</code> e aplicado por um integrante). <b>Reteste com 16 clientes: o container ainda reiniciou 2 vezes</b> (<code>restartCount = 2</code> no Azure). Hipótese refutada.</li>
+  <li><b>Causa raiz.</b> A rota <code>POST /v1/deteccoes</code> é <code>async</code> e executava a decodificação da imagem e a inferência ONNX <b>dentro do event loop</b>: com a fila de detecções, o <code>/health</code> consultado pela probe esperava atrás de todas elas. Um teste de regressão reproduziu o defeito — o <code>/health</code> esperou 1,22 s atrás de uma única inferência lenta.</li>
+  <li><b>Correção.</b> O trabalho de CPU passou para threads de trabalho (<code>anyio.to_thread</code>), com no máximo 2 inferências simultâneas (<code>VIGIAVIA_INFERENCIAS_SIMULTANEAS</code>); o teste de regressão agora passa no pipeline. O timeout de 5 s ficou como defesa em profundidade.</li>
+  <li><b>Verificação em produção</b> (16 clientes por 5 min, commit <a href="https://github.com/akiramrt/vigiavia-mvp/commit/b12e62e"><code>b12e62e</code></a>): 2.482 requisições (8,3 req/s), <b>100,0% com sucesso</b>, p95 de 2,82 s (a CPU continua no limite: escalar ainda é necessário), fila de até 17 requisições, <b><code>/health</code> sempre 200</b> com latência mediana de 0,71 s e máxima de 3,74 s nas 24 medições, e <b>nenhum reinício</b> (<code>restartCount = 0</code>; <code>process_start_time_seconds</code> constante). Amostras em <code>docs/evidencias/reteste_carga_pos_correcao.txt</code>.</li>
+</ol>
+Próximo passo: escala horizontal por requisições concorrentes (regra HTTP do Container Apps), o cenário “Cidade” da seção 8.</div>
 <p class="peq">Observação: nesta máquina o Docker Desktop não iniciou (WSL desativado), então Prometheus e Grafana rodaram como binários nativos com os <b>mesmos arquivos de configuração</b> do repositório, presos a 127.0.0.1; a stack em contêineres é validada pelo job de compose a cada push.</p>
 
-<h2 style="break-before:page">7. Segurança, responsabilidade compartilhada e LGPD</h2>
+<div style="break-inside:avoid"><h2>7. Segurança, responsabilidade compartilhada e LGPD</h2>
 <h3>Modelo de responsabilidade compartilhada (PaaS / contêiner serverless)</h3>
 <table>
   <tr><th style="width:33%">Microsoft (provedor)</th><th style="width:33%">Compartilhado</th><th>Equipe VigiaVia (cliente)</th></tr>
   <tr><td>Data centers, hardware, rede física, hipervisor e sistema dos hosts; plano de controle e orquestração do Container Apps; disponibilidade e correções da plataforma; certificado e terminação TLS do ingress; criptografia em repouso padrão do Storage e do ACR; serviço do Entra ID.</td>
       <td>Identidade (o Entra ID fornece; nós configuramos identidades, RBAC e a federação OIDC); rede (a plataforma isola; nós decidimos o que é exposto — só HTTPS); logs (a plataforma coleta; nós definimos retenção, acesso e custo).</td>
       <td>Código e dependências; imagem base e suas correções (rebuild + Trivy); configuração do container (não root, probes, limites); segredos (<code>METRICS_TOKEN</code>, state); IaC e proteção do state; cadeia de CI/CD (actions fixadas, OIDC); dados dos cidadãos (classificação, minimização, retenção, LGPD); monitoramento e resposta a alertas.</td></tr>
-</table>
+</table></div>
 <h3>Onde moram os dados pessoais (LGPD)</h3>
 <table>
   <tr><th style="width:21%">Dado</th><th style="width:27%">Onde fica</th><th>Tratamento e retenção</th></tr>
@@ -274,6 +288,7 @@ MVP no ar com o commit 91f82257712cb1de99f06fb4bc9dcc6675a955c6: https://***.hap
   <tr><td>Gitleaks falhava no primeiro push</td><td>A action varria um intervalo <code>commit^..</code> inexistente no commit raiz. Troca pelo binário (versão e SHA-256 fixados) varrendo o histórico completo.</td></tr>
   <tr><td>Drift no ambiente do Container Apps</td><td>O Azure adiciona o perfil “Consumption” e o plano queria recriar o ambiente. O perfil foi declarado no Terraform (o código continua sendo a fonte da verdade).</td></tr>
   <tr><td>Job de compose intermitente</td><td>Prometheus e Grafana não têm <code>HEALTHCHECK</code>; o teste batia antes de aceitarem conexões. <code>curl --retry --retry-all-errors</code>.</td></tr>
+  <tr><td>Container reiniciava sob carga</td><td>Visto no dashboard durante o teste de carga. Aumentar o timeout das probes (1 s → 5 s, via Terraform) não resolveu; a causa era a inferência rodando no event loop da rota <code>async</code>, que travava o <code>/health</code>. Inferência em threads com limite de 2 simultâneas, teste de regressão e reteste em produção sem reinício (seção 6).</td></tr>
 </table>
 
 <h2>10. Como reproduzir</h2>
@@ -301,7 +316,7 @@ powershell -File ..\scripts\configurar_github.ps1 -HabilitarDeploy   # GitHub Se
 </div>
 
 <h2>11. Conclusão</h2>
-<p>O VigiaVia está no ar em <a href="https://ca-vigiavia-prod.happywave-0bf5b4c3.brazilsouth.azurecontainerapps.io">https://ca-vigiavia-prod.happywave-0bf5b4c3.brazilsouth.azurecontainerapps.io</a> e só chega lá passando por portões automáticos: nenhum segredo no histórico, nenhum padrão inseguro no código, testes e stack funcionando, nenhuma vulnerabilidade HIGH/CRITICAL corrigível na imagem. A demonstração mostrou o ponto central do DevSecOps: uma mudança que <b>passa nos testes</b> pode ser <b>perigosa</b>, e foi o portão de segurança — não uma revisão manual — que impediu a imagem vulnerável de chegar ao cidadão. A infraestrutura é reproduzível por código, sem senhas de nuvem e sem portas administrativas, e a observabilidade mostrou, com carga real, onde o serviço satura e quando precisa escalar.</p>
+<p>O VigiaVia está no ar em <a href="https://ca-vigiavia-prod.happywave-0bf5b4c3.brazilsouth.azurecontainerapps.io">https://ca-vigiavia-prod.happywave-0bf5b4c3.brazilsouth.azurecontainerapps.io</a> e só chega lá passando por portões automáticos: nenhum segredo no histórico, nenhum padrão inseguro no código, testes e stack funcionando, nenhuma vulnerabilidade HIGH/CRITICAL corrigível na imagem. A demonstração mostrou o ponto central do DevSecOps: uma mudança que <b>passa nos testes</b> pode ser <b>perigosa</b>, e foi o portão de segurança — não uma revisão manual — que impediu a imagem vulnerável de chegar ao cidadão. A infraestrutura é reproduzível por código, sem senhas de nuvem e sem portas administrativas, e a observabilidade mostrou, com carga real, onde o serviço satura e quando precisa escalar — e revelou um defeito (a inferência travando o event loop e derrubando a liveness probe) que foi investigado até a causa raiz, corrigido com teste de regressão e verificado em produção.</p>
 
 </body>
 </html>

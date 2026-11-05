@@ -92,6 +92,7 @@ python scripts/gerar_carga.py --url https://ca-vigiavia-prod.happywave-0bf5b4c3.
 | GitHub Secrets e Variables (só identificadores; nenhuma senha de nuvem) | [github_configuracao.txt](docs/evidencias/github_configuracao.txt) |
 | Planos do Terraform revisados antes de cada `apply` | [docs/evidencias](docs/evidencias) (`terraform_plan_*.txt`) |
 | Dashboard dos sinais de ouro e alerta disparado sob carga | [docs/evidencias/img](docs/evidencias/img) e [relatório (PDF)](docs/relatorio/VigiaVia_Secure_DevOps.pdf) |
+| Achado da observabilidade: reinício sob carga → timeout das probes (não resolveu) → causa raiz: inferência no event loop → correção com teste de regressão → reteste sem reinício | [plano das probes](docs/evidencias/terraform_plan_6_probes.txt) · [commit b12e62e](https://github.com/akiramrt/vigiavia-mvp/commit/b12e62e) · [reteste](docs/evidencias/reteste_carga_pos_correcao.txt) |
 
 ## Segurança e LGPD (resumo)
 

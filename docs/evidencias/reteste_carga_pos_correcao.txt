@@ -1,0 +1,36 @@
+# Reteste de carga após a correção (commit b12e62e: inferência fora do event loop; probes com timeout de 5 s)
+# Deploy pelo run 41958413531. 16 clientes por 300 s contra o MVP publicado; amostra a cada ~10 s de:
+# process_start_time_seconds (reinício), http_requests_em_andamento (fila) e /health (código HTTP:latência em s,
+# medida da máquina da equipe, incluindo rede e TLS).
+
+00:00:42 inicio=1.79384761142e+09 fila=1.0 health=200:0.644711
+00:00:54 inicio=1.79384761142e+09 fila=12.0 health=200:0.604097
+00:01:07 inicio=1.79384761142e+09 fila=16.0 health=200:1.467432
+00:01:22 inicio=1.79384761142e+09 fila=10.0 health=200:2.567708
+00:01:35 inicio=1.79384761142e+09 fila=16.0 health=200:1.598171
+00:01:48 inicio=1.79384761142e+09 fila=13.0 health=200:0.950054
+00:02:01 inicio=1.79384761142e+09 fila=12.0 health=200:1.556799
+00:02:15 inicio=1.79384761142e+09 fila=11.0 health=200:1.615920
+00:02:31 inicio=1.79384761142e+09 fila=10.0 health=200:3.740963
+00:02:43 inicio=1.79384761142e+09 fila=16.0 health=200:0.601273
+00:02:55 inicio=1.79384761142e+09 fila=17.0 health=200:0.610612
+00:03:07 inicio=1.79384761142e+09 fila=17.0 health=200:0.628522
+00:03:19 inicio=1.79384761142e+09 fila=17.0 health=200:0.603671
+00:03:31 inicio=1.79384761142e+09 fila=16.0 health=200:0.630069
+00:03:43 inicio=1.79384761142e+09 fila=16.0 health=200:0.634932
+00:03:55 inicio=1.79384761142e+09 fila=17.0 health=200:0.604794
+00:04:09 inicio=1.79384761142e+09 fila=16.0 health=200:1.534414
+00:04:21 inicio=1.79384761142e+09 fila=17.0 health=200:0.657655
+00:04:34 inicio=1.79384761142e+09 fila=11.0 health=200:1.668674
+00:04:47 inicio=1.79384761142e+09 fila=15.0 health=200:1.137308
+00:04:59 inicio=1.79384761142e+09 fila=12.0 health=200:0.761947
+00:05:11 inicio=1.79384761142e+09 fila=16.0 health=200:0.607499
+00:05:23 inicio=1.79384761142e+09 fila=17.0 health=200:0.643934
+00:05:36 inicio=1.79384761142e+09 fila=13.0 health=200:1.613146
+
+Resumo
+- gerador de carga: 2482 requisições em 300 s (8.3 req/s), 100.0% OK, latência p50 2.03 s, p95 2.82 s
+- process_start_time_seconds distintos: 1 (1.79384761142e+09) -> nenhum reinício
+- restartCount da réplica no Azure após o teste: 0
+- fila máxima: 17 requisições em andamento
+- /health: 24 de 24 respostas 200; latência mediana 0.71 s, máxima 3.74 s (timeout da probe: 5 s)
