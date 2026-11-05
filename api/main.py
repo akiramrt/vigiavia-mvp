@@ -127,7 +127,10 @@ app = FastAPI(title="VigiaVia", version=__version__, lifespan=ciclo_de_vida, doc
 
 
 # ----------------------------------------------------------------------------- middleware: métricas + segurança
+# media-src precisa de blob:: o vídeo que o cidadão escolhe é aberto no próprio navegador (URL.createObjectURL).
+# Sem isso, o default-src 'self' faz o navegador recusar o vídeo (a foto passa, porque img-src já tem blob:).
 CSP = ("default-src 'self'; img-src 'self' data: blob: https://tile.openstreetmap.org https://unpkg.com; "
+       "media-src 'self' blob:; "
        "script-src 'self' https://unpkg.com https://cdn.jsdelivr.net 'wasm-unsafe-eval'; "
        "style-src 'self' 'unsafe-inline' https://unpkg.com; connect-src 'self' https://cdn.jsdelivr.net; "
        "worker-src 'self' blob:; frame-ancestors 'none'; base-uri 'self'; form-action 'self'")

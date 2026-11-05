@@ -38,6 +38,14 @@ def test_health_e_cabecalhos_de_seguranca(cliente):
         assert h in r.headers
 
 
+def test_csp_permite_abrir_video_escolhido_pelo_cidadao(cliente):
+    # Regressão: sem media-src com blob:, o navegador recusava o vídeo aberto por URL.createObjectURL.
+    csp = cliente.get("/").headers["Content-Security-Policy"]
+    diretivas = dict(d.strip().split(" ", 1) for d in csp.split(";") if d.strip())
+    assert "blob:" in diretivas["media-src"].split()
+    assert "blob:" not in diretivas["default-src"].split()
+
+
 def test_detector_onnx_encontra_buraco_em_amostra_real(cliente):
     amostra = RAIZ / "api" / "static" / "amostras" / "rdd2022_India_003366.jpg"
     r = cliente.post("/v1/deteccoes", files={"imagem": (amostra.name, amostra.read_bytes(), "image/jpeg")})

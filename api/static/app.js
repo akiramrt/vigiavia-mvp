@@ -227,13 +227,21 @@ $("#btn-camera").addEventListener("click", async () => {
     st.rodando = true; $("#btn-parar").hidden = false; laco();
   } catch (e) { status("Não foi possível abrir a câmera: " + e.message); }
 });
+const EXT_VIDEO = /\.(mp4|m4v|mov|webm|ogv|mkv|avi|3gp)$/i;
 $("#arquivo").addEventListener("change", async (ev) => {
-  const f = ev.target.files[0]; if (!f) return;
+  const f = ev.target.files[0];
+  ev.target.value = "";                      // escolher o mesmo arquivo de novo também dispara "change"
+  if (!f) return;
   parar();
   const url = URL.createObjectURL(f);
-  if (f.type.startsWith("video/")) {
-    video.srcObject = null; video.src = url; video.hidden = false; await video.play();
-    st.rodando = true; $("#btn-parar").hidden = false; laco();
+  if (f.type.startsWith("video/") || (!f.type && EXT_VIDEO.test(f.name))) {
+    status("Abrindo o vídeo…");
+    try {
+      video.srcObject = null; video.src = url; video.hidden = false; await video.play();
+      st.rodando = true; $("#btn-parar").hidden = false; laco();
+    } catch (e) {
+      status(`Não foi possível abrir este vídeo (${e.message}). Tente um MP4 (H.264) ou WebM.`);
+    }
   } else {
     const img = new Image();
     img.onload = async () => {
@@ -243,6 +251,7 @@ $("#arquivo").addEventListener("change", async (ev) => {
       try { const d = await detectarQuadro(); status(`${d.length} buraco(s) detectado(s).`); }
       catch (e) { status("Erro: " + e.message); }
     };
+    img.onerror = () => status("Não foi possível abrir este arquivo. Envie uma foto (JPG ou PNG) ou um vídeo (MP4 ou WebM).");
     img.src = url;
   }
 });
