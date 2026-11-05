@@ -65,6 +65,12 @@ resource "azurerm_container_app_environment" "env" {
   resource_group_name        = azurerm_resource_group.rg.name
   log_analytics_workspace_id = azurerm_log_analytics_workspace.logs.id
   tags                       = var.tags
+
+  # perfil serverless (paga por uso); o Azure cria ambientes novos já com ele
+  workload_profile {
+    name                  = "Consumption"
+    workload_profile_type = "Consumption"
+  }
 }
 
 resource "azurerm_container_app" "app" {
@@ -72,6 +78,7 @@ resource "azurerm_container_app" "app" {
   container_app_environment_id = azurerm_container_app_environment.env.id
   resource_group_name          = azurerm_resource_group.rg.name
   revision_mode                = "Single"
+  workload_profile_name        = "Consumption"
   tags                         = var.tags
 
   identity {
@@ -164,7 +171,7 @@ resource "azurerm_federated_identity_credential" "github_main" {
   parent_id           = azurerm_user_assigned_identity.github.id
   audience            = ["api://AzureADTokenExchange"]
   issuer              = "https://token.actions.githubusercontent.com"
-  subject             = "repo:${var.github_repo}:ref:refs/heads/main"
+  subject             = var.github_oidc_subject
 }
 
 # Menor privilégio: push só neste ACR e escrita só neste grupo de recursos

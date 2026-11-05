@@ -21,6 +21,16 @@ variable "github_repo" {
   default     = "akiramrt/vigiavia-mvp"
 }
 
+variable "github_oidc_subject" {
+  description = <<-EOT
+    Claim 'sub' do token OIDC do GitHub aceito pelo Azure (só a branch main). O GitHub usa IDs imutáveis
+    do dono e do repositório (repo:<dono>@<id>/<repo>@<id>:ref:...), o que impede que um repositório
+    recriado com o mesmo nome herde o acesso à nuvem.
+  EOT
+  type        = string
+  default     = "repo:akiramrt@128194173/vigiavia-mvp@1446365122:ref:refs/heads/main"
+}
+
 variable "metrics_token" {
   description = "Token Bearer exigido pelo /metrics (guardado como segredo do Container App)"
   type        = string
