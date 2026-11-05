@@ -107,7 +107,7 @@ python scripts/gerar_carga.py --url https://ca-vigiavia-prod.happywave-0bf5b4c3.
 
 [Modelo de negócio e viabilidade](docs/pitch/modelo_de_negocio.md) (números reproduzíveis em
 [`viabilidade.py`](docs/pitch/viabilidade.py)) · [roteiro de 5 minutos](docs/pitch/roteiro.md) ·
-[guia de gravação](docs/pitch/guia_gravacao.md) · [telas de apoio](docs/pitch/telas).
+[guia de gravação](docs/pitch/guia_gravacao.md) · [slides (PowerPoint)](docs/pitch/VigiaVia_Pitch.pptx), gerados por [`gerar_pptx.js`](docs/pitch/gerar_pptx.js).
 
 ## Licença
 Código sob **AGPL-3.0**. Modelo treinado com Ultralytics YOLO (AGPL-3.0) sobre o RDD2022 (CC BY-SA 4.0).
