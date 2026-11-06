@@ -49,6 +49,10 @@ small { color: var(--suave); flex-basis: 100%; }
 .kpi { background: var(--cartao); border: 1px solid var(--borda); border-radius: 12px; padding: 12px 16px; }
 .kpi b { display: block; font-size: 1.8rem; } .kpi span { color: var(--suave); font-size: .9rem; }
 .mapa { height: 460px; border-radius: 10px; }
+/* Zeladoria: mapa em cima e fila embaixo, na largura toda; lado a lado, a fila ficava estreita e escondia Status e Ações */
+.grade-zeladoria { grid-template-columns: minmax(0, 1fr); }
+.grade-zeladoria .mapa { height: 360px; }
+.acoes-fila { white-space: nowrap; }
 .ajuda { color: var(--suave); font-size: .9rem; margin-top: 0; }
 .tabela-rolagem { overflow-x: auto; }
 table { width: 100%; border-collapse: collapse; font-size: .95rem; }

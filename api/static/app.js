@@ -9,6 +9,7 @@ const ORT_WASM = "https://cdn.jsdelivr.net/npm/onnxruntime-web@1.20.1/dist/";
 const ROTULO = { baixa: "BAIXA", media: "MÉDIA", alta: "ALTA" };
 const COR = { baixa: "#ffd400", media: "#ff8c00", alta: "#ff3b30" };
 const PESO_SEV = { baixa: 1, media: 2, alta: 3 };
+const fmtPrio = (v) => Number(v).toLocaleString("pt-BR", { maximumFractionDigits: 1 });   // 7.755 -> "7,8"
 
 const st = {
   modelo: null, rodando: false, stream: null, deteccoes: [], ort: null, sessao: null,
@@ -308,7 +309,7 @@ $("#btn-relatar").addEventListener("click", async () => {
     const r = await fetch("/v1/relatos", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(corpo) });
     const j = await r.json();
     el.className = "resposta " + (r.ok ? "ok" : "erro");
-    el.textContent = r.ok ? `${j.mensagem} (prioridade ${j.relato.prioridade}).` : `Erro: ${JSON.stringify(j.detail)}`;
+    el.textContent = r.ok ? `${j.mensagem} (prioridade ${fmtPrio(j.relato.prioridade)}).` : `Erro: ${JSON.stringify(j.detail)}`;
     if (r.ok && st.candidato === c) st.candidato = null;   // o mesmo buraco não vai duas vezes sem querer
   } catch (e) {
     el.className = "resposta erro"; el.textContent = "Não foi possível enviar o relato: " + e.message;
@@ -318,9 +319,16 @@ $("#btn-relatar").addEventListener("click", async () => {
 });
 
 /* ------------------------------------------------------------------ zeladoria */
+const ACOES = [["confirmado", "Validar"], ["descartado", "Descartar"], ["resolvido", "Resolvido"]];
+const msgFila = (t, ok = true) => { const el = $("#fila-msg"); el.className = "resposta " + (ok ? "ok" : "erro"); el.textContent = t; };
 async function carregarFila() {
-  const j = await (await fetch("/v1/relatos")).json();
-  const rel = j.relatos;
+  let rel;
+  try {
+    const r = await fetch("/v1/relatos");
+    if (!r.ok) throw new Error(`API ${r.status}`);
+    rel = (await r.json()).relatos;
+  } catch (e) { msgFila("Não foi possível carregar a fila: " + e.message, false); return; }
+  if ($("#fila-msg").classList.contains("erro")) $("#fila-msg").textContent = "";
   const c = (f) => rel.filter(f).length;
   $("#kpis").innerHTML = [
     ["Relatos abertos", c((r) => r.status === "pendente" || r.status === "confirmado")],
@@ -332,21 +340,29 @@ async function carregarFila() {
   const tb = $("#fila"); tb.innerHTML = "";
   for (const r of rel) {
     const tr = document.createElement("tr");
-    tr.innerHTML = `<td><b>${r.prioridade}</b></td>
+    tr.innerHTML = `<td><b>${fmtPrio(r.prioridade)}</b></td>
       <td>${r.tem_evidencia ? `<img src="/v1/relatos/${r.id}/evidencia" alt="Recorte da via com o buraco">` : "—"}</td>
       <td><span class="chip ${r.severidade}">${ROTULO[r.severidade]}</span></td>
       <td>${r.confirmacoes}</td><td>${(r.confianca_max * 100).toFixed(0)}%</td><td>${r.status}</td>
-      <td>${["confirmado", "descartado", "resolvido"].map((s) => `<button class="mini" data-id="${r.id}" data-s="${s}">${s}</button>`).join("")}</td>`;
+      <td class="acoes-fila">${ACOES.map(([s, rotulo]) => `<button class="mini" data-id="${r.id}" data-s="${s}"${r.status === s ? " disabled" : ""}>${rotulo}</button>`).join("")}</td>`;
     tb.appendChild(tr);
   }
   tb.querySelectorAll("button").forEach((b) => b.addEventListener("click", async () => {
-    await fetch(`/v1/relatos/${b.dataset.id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ status: b.dataset.s }) });
+    b.disabled = true;
+    try {
+      const r = await fetch(`/v1/relatos/${b.dataset.id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ status: b.dataset.s }) });
+      if (!r.ok) throw new Error(`API ${r.status}`);
+      msgFila(`Relato atualizado: ${b.dataset.s}${b.dataset.s === "confirmado" ? " (vira ordem de serviço)" : ""}.`);
+    } catch (e) { msgFila("Não foi possível atualizar o relato: " + e.message, false); }
     carregarFila();
   }));
   if (window.L) {
     if (!st.mapa) {
       st.mapa = L.map("mapa").setView([-23.5603, -46.6505], 15);
-      L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19, attribution: "© OpenStreetMap" }).addTo(st.mapa);
+      // Os tiles do OSM exigem Referer, e a página usa Referrer-Policy: no-referrer. Só os tiles enviam a origem
+      // (nunca o caminho), como pede a política de uso: https://operations.osmfoundation.org/policies/tiles/
+      L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19, attribution: "© OpenStreetMap",
+        referrerPolicy: "strict-origin-when-cross-origin" }).addTo(st.mapa);
       st.camadaMapa = L.layerGroup().addTo(st.mapa);
     }
     st.camadaMapa.clearLayers();
