@@ -25,7 +25,7 @@ const st = {
   modelo: null, sessao: null, fonte: null, rodando: false, stream: null, ultimaVoz: 0,
   geracao: 0,          // muda a cada troca de fonte; resultados atrasados da fonte anterior são descartados
   seq: 0, exibido: 0,  // ordem dos quadros enviados e do último exibido (resposta fora de ordem é ignorada)
-  emVoo: 0, tempoAnalisado: -1, pausaAte: 0, taxa: 0, intervalo: 0, ultimoResultado: 0,
+  emVoo: 0, tempoAnalisado: -1, pausaAte: 0, taxa: 0, tempos: [],
   atual: null,         // quadro exibido agora, se tem buraco: { q, d, severidade, confianca }
   candidato: null,     // quadro com a detecção mais confiante da fonte atual
   enviando: false,
@@ -231,13 +231,12 @@ async function analisar(q) {
     st.atual = dets.length ? resumo(dets, q) : null;
     if (st.atual && (!st.candidato || st.atual.confianca > st.candidato.confianca)) st.candidato = st.atual;
     atualizarBotao();
-    const agora = performance.now();   // média dos intervalos (com 2 em análise, as respostas chegam em pares)
-    if (st.ultimoResultado) {
-      const dt = agora - st.ultimoResultado;
-      st.intervalo = st.intervalo ? 0.9 * st.intervalo + 0.1 * dt : dt;
-      st.taxa = 1000 / st.intervalo;
-    }
-    st.ultimoResultado = agora;
+    // Taxa = análises nas últimas 12 respostas ÷ tempo entre elas (com 2 em análise, as respostas chegam em pares;
+    // só aparece depois de 6 respostas, para não mostrar um número absurdo logo no início).
+    const agora = performance.now();
+    st.tempos.push(agora);
+    if (st.tempos.length > 12) st.tempos.shift();
+    st.taxa = st.tempos.length >= 6 ? ((st.tempos.length - 1) * 1000) / (agora - st.tempos[0]) : 0;
     return dets;
   } finally {
     if (g === st.geracao) st.emVoo--;
@@ -276,7 +275,7 @@ function laco() {
 }
 function iniciarAnalise() {
   if (st.rodando) return;
-  st.rodando = true; st.tempoAnalisado = -1; st.ultimoResultado = 0; st.intervalo = 0; st.taxa = 0;
+  st.rodando = true; st.tempoAnalisado = -1; st.tempos = []; st.taxa = 0;
   $("#btn-parar").hidden = false;
   laco();
 }
@@ -299,8 +298,8 @@ $("#btn-parar").addEventListener("click", () => {
   parar();
   if (st.fonte === "camera") { limparTela(); status("Câmera desligada."); }   // sem imagem por baixo, as caixas somem
 });
-video.addEventListener("play", () => { st.ultimoResultado = 0; if (st.fonte === "video") iniciarAnalise(); });
-video.addEventListener("pause", () => { st.ultimoResultado = 0; });
+video.addEventListener("play", () => { st.tempos = []; st.taxa = 0; if (st.fonte === "video") iniciarAnalise(); });
+video.addEventListener("pause", () => { st.tempos = []; st.taxa = 0; });
 $("#btn-camera").addEventListener("click", async () => {
   try {
     novaFonte("camera");
