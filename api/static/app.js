@@ -25,7 +25,7 @@ const st = {
   modelo: null, sessao: null, fonte: null, rodando: false, stream: null, ultimaVoz: 0,
   geracao: 0,          // muda a cada troca de fonte; resultados atrasados da fonte anterior são descartados
   seq: 0, exibido: 0,  // ordem dos quadros enviados e do último exibido (resposta fora de ordem é ignorada)
-  emVoo: 0, tempoAnalisado: -1, pausaAte: 0, taxa: 0, tempos: [],
+  emVoo: 0, tempoAnalisado: -1, pausaAte: 0, taxa: 0, tempos: [], rtt: 0, ultimoEnvio: 0,
   atual: null,         // quadro exibido agora, se tem buraco: { q, d, severidade, confianca }
   candidato: null,     // quadro com a detecção mais confiante da fonte atual
   enviando: false,
@@ -221,10 +221,12 @@ function resumo(dets, q) {
   return { q, d, severidade: sev, confianca: d.confianca };
 }
 async function analisar(q) {
-  const g = st.geracao, seq = ++st.seq;
+  const g = st.geracao, seq = ++st.seq, t0 = performance.now();
   st.emVoo++;
   try {
     const dets = $("#modo").value === "aparelho" ? await detectarAparelho(q) : await detectarServidor(q);
+    const ida = performance.now() - t0;
+    st.rtt = st.rtt ? 0.8 * st.rtt + 0.2 * ida : ida;
     if (g !== st.geracao || seq < st.exibido) return null;   // fonte trocada ou resposta fora de ordem
     st.exibido = seq;
     desenhar(dets, q);
@@ -254,16 +256,19 @@ function mostrarStatus(d) {
   }
 }
 // O vídeo toca sozinho; o laço só decide quando mandar um quadro: sempre que houver vaga e o quadro for novo
-// (tocando, quase sempre; pausado, uma vez ao pausar e a cada vez que a barra é arrastada).
+// (tocando, quase sempre; pausado, uma vez ao pausar e a cada vez que a barra é arrastada). Com 2 em análise, os
+// envios ficam espaçados em meia ida e volta: as respostas chegam distribuídas, e não em pares quase iguais.
 function laco() {
   const g = st.geracao;
   const passo = () => {
     if (!st.rodando || g !== st.geracao) return;
     if (video.readyState >= 2 && video.videoWidth) {
       ajustarTela(video.videoWidth, video.videoHeight);
+      const agora = performance.now(), vagas = maxEmVoo();
       const quadroNovo = video.currentTime !== st.tempoAnalisado;
-      if (quadroNovo && st.emVoo < maxEmVoo() && performance.now() >= st.pausaAte) {
-        st.tempoAnalisado = video.currentTime;
+      const espacado = vagas === 1 || agora - st.ultimoEnvio >= (st.rtt || 0) / vagas;
+      if (quadroNovo && espacado && st.emVoo < vagas && agora >= st.pausaAte) {
+        st.tempoAnalisado = video.currentTime; st.ultimoEnvio = agora;
         analisar(capturar(video, video.videoWidth, video.videoHeight))
           .then((d) => { if (d) mostrarStatus(d); })
           .catch((e) => { st.pausaAte = performance.now() + 1000; status("Erro na detecção: " + e.message); });
