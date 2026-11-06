@@ -24,18 +24,21 @@ URL pública: **https://ca-vigiavia-prod.happywave-0bf5b4c3.brazilsouth.azurecon
 
 **Opção A — na rua, pelo celular (vale mais no critério “MVP em uso real”, peso 2,5).** Na calçada, nunca dirigindo
 ou pilotando. Ligue a **gravação de tela do celular com microfone**, abra a URL, toque em **Câmera ao vivo**, aponte
-para um buraco de verdade até o alerta **“ATENÇÃO: BURACO À FRENTE”**, toque em **Usar minha localização** e
-**Enviar relato**. Aponte para o asfalto: evite filmar rostos e placas.
+para um buraco de verdade até o alerta **“ATENÇÃO: BURACO À FRENTE”**, toque em **Usar minha localização** (ou
+marque o ponto no mapa) e em **Enviar relato**. Aponte para o asfalto: evite filmar rostos e placas.
 
 **Opção B — no computador, com a barra de endereço visível** (Clipchamp → Gravar tela, ou `Win + Alt + R`):
 1. aba **Cidadão** → **Enviar foto ou vídeo** → `Downloads\pitch\video_rua_silvia_para_demo.webm`
    (buraco real na Rua Sílvia, Bela Vista — Daniel Fraga, [Wikimedia Commons](https://commons.wikimedia.org/wiki/File%3ABuraco_na_rua_S%C3%ADlvia%2C_276_%28Bela_Vista%29.webm), CC BY 3.0);
-2. mostre a detecção e o alerta e clique em **Enviar relato** (o botão libera no primeiro buraco detectado e continua
-   liberado). Com a coordenada que já vem preenchida, o relato cai sobre um buraco de demonstração e aparece
-   **“Buraco já registrado… confirmação adicionada”**: é a deduplicação do roteiro. Para criar um relato novo, mude a
-   longitude para `-46.652000` antes de enviar (evite “Usar minha localização” no vídeo: mostraria onde você está);
-3. aba **Zeladoria**: o relato no mapa e na fila priorizada;
-4. **valide** o relato (vira ordem de serviço).
+2. o vídeo toca com as caixas por cima. Quando aparecer **“ATENÇÃO: BURACO À FRENTE”**, **pause** na barra do vídeo
+   (dá para voltar e avançar; no menu ⋮ do vídeo, reduzir a velocidade): o status mostra
+   “o relato vai com este quadro”;
+3. em **Onde está o buraco?**, digite `Rua Sílvia, 276, São Paulo`, clique em **Buscar** e depois em
+   **Enviar relato**. Nesse ponto já existe um buraco de demonstração, então aparece **“Buraco já registrado…
+   confirmação adicionada”**: é a deduplicação do roteiro. Para criar um relato novo, toque em outro ponto do mapa
+   antes de enviar (evite “Usar minha localização” no vídeo: mostraria onde você está);
+4. aba **Zeladoria**: o relato no mapa e na fila priorizada;
+5. clique em **Validar** (vira ordem de serviço).
 
 Salve como `wesley_demo.mp4`.
 

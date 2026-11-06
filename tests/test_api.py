@@ -44,6 +44,8 @@ def test_csp_permite_abrir_video_escolhido_pelo_cidadao(cliente):
     diretivas = dict(d.strip().split(" ", 1) for d in csp.split(";") if d.strip())
     assert "blob:" in diretivas["media-src"].split()
     assert "blob:" not in diretivas["default-src"].split()
+    # a busca de endereço do relato (Nominatim) é a única origem externa nova liberada para fetch
+    assert diretivas["connect-src"].split() == ["'self'", "https://cdn.jsdelivr.net", "https://nominatim.openstreetmap.org"]
 
 
 def test_detector_onnx_encontra_buraco_em_amostra_real(cliente):

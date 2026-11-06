@@ -132,7 +132,7 @@ app = FastAPI(title="VigiaVia", version=__version__, lifespan=ciclo_de_vida, doc
 CSP = ("default-src 'self'; img-src 'self' data: blob: https://tile.openstreetmap.org https://unpkg.com; "
        "media-src 'self' blob:; "
        "script-src 'self' https://unpkg.com https://cdn.jsdelivr.net 'wasm-unsafe-eval'; "
-       "style-src 'self' 'unsafe-inline' https://unpkg.com; connect-src 'self' https://cdn.jsdelivr.net; "
+       "style-src 'self' 'unsafe-inline' https://unpkg.com; connect-src 'self' https://cdn.jsdelivr.net https://nominatim.openstreetmap.org; "
        "worker-src 'self' blob:; frame-ancestors 'none'; base-uri 'self'; form-action 'self'")
 
 
