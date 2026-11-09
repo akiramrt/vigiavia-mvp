@@ -84,6 +84,12 @@ function lista(s, x, y, w, h, itens, o = {}) {
     itens.map((t) => `<div style="${css({ position: "relative", "padding-left": `${18 * PT}px`, "margin-bottom": `${gap * PT}px` })}"><span style="position:absolute;left:0">•</span>${esc(t)}</div>`).join("") + "</div>");
 }
 
+// largura ÷ altura de um PNG, lidas do cabeçalho IHDR (bytes 16–23)
+function proporcao(arq) {
+  const b = fs.readFileSync(arq);
+  return b.readUInt32BE(16) / b.readUInt32BE(20);
+}
+
 function imagem(s, arq, x, y, w, h, o = {}) {
   s.p.addImage({ path: arq, x, y, w, h, objectName: o.nome || "imagem", altText: o.alt || "" });
   s.h.push(`<img src="${pathToFileURL(arq)}" style="${css(pos(x, y, w, h))}">`);
@@ -196,9 +202,10 @@ async function montar() {
     notas: "[Troque para o navegador: aqui entra a gravação do MVP em uso real.] Este é o VigiaVia funcionando de verdade, na URL pública, no Azure. Na visão do cidadão, eu abro a câmera — ou envio um vídeo gravado na rua. O modelo detecta o buraco em tempo real e avisa: atenção, buraco à frente, com a severidade. Com um toque, envio o relato: vai só o recorte da via e a localização; nenhuma foto inteira é guardada. Agora, a visão da zeladoria: os relatos chegam numa fila priorizada por severidade e confirmações, e aparecem no mapa. Se outra pessoa relatar o mesmo buraco, ele não vira um chamado novo: vira uma confirmação e sobe na fila. O agente valida com um clique, e o relato vira ordem de serviço. E tudo roda em produção, com deploy automático e segurança no pipeline.",
     desenhar: (s) => {
       const y = 2.15, h = 3.9;
-      const w1 = h * (1366 / 1231), w2 = h * (1366 / 1235);
-      imagem(s, path.join(RAIZ, "docs/evidencias/img/mvp_cidadao.png"), M, y, w1, h, { alt: "Tela do cidadão: buraco detectado" });
-      imagem(s, path.join(RAIZ, "docs/evidencias/img/mvp_zeladoria.png"), M + w1 + 0.3, y, w2, h, { alt: "Tela da zeladoria: fila e mapa" });
+      const telaCid = path.join(RAIZ, "docs/pitch/img/mvp_cidadao.png"), telaZel = path.join(RAIZ, "docs/pitch/img/mvp_zeladoria.png");
+      const w1 = h * proporcao(telaCid), w2 = h * proporcao(telaZel);   // largura/altura lidas do próprio PNG
+      imagem(s, telaCid, M, y, w1, h, { alt: "Tela do cidadão: buraco detectado" });
+      imagem(s, telaZel, M + w1 + 0.3, y, w2, h, { alt: "Tela da zeladoria: fila e mapa" });
       texto(s, M, y + h + 0.1, w1, 0.3, "Cidadão: detecção e relato", { tam: 12, cor: "suave" });
       texto(s, M + w1 + 0.3, y + h + 0.1, w2, 0.3, "Zeladoria: fila priorizada e mapa", { tam: 12, cor: "suave" });
       const x = M + w1 + w2 + 0.65, wd = W - M - x;
@@ -387,7 +394,13 @@ async function aplicarTema(arq) {
     xml = xml.replace(/<a:clrScheme name="[^"]*">/, `<a:clrScheme name="${THEME.name}">`);
     zip.file(n, xml);
   }
-  fs.writeFileSync(arq, await zip.generateAsync({ type: "nodebuffer", compression: "DEFLATE" }));
+  // Entradas de pasta no ZIP impedem abrir/coeditar o .pptx pelo Teams/OneDrive. zip.remove(pasta) apagaria também
+  // o conteúdo da pasta, então os arquivos são copiados para um ZIP novo, sem criar entradas de pasta.
+  const limpo = new JSZip();
+  for (const [nome, item] of Object.entries(zip.files)) {
+    if (!item.dir) limpo.file(nome, await item.async("nodebuffer"), { createFolders: false });
+  }
+  fs.writeFileSync(arq, await limpo.generateAsync({ type: "nodebuffer", compression: "DEFLATE" }));
 }
 
 function escreverRoteiro() {
