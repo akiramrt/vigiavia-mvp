@@ -68,7 +68,7 @@
       <tr><td>Componente de visão computacional</td><td><a href="https://github.com/akiramrt/vigiavia-visao-computacional">github.com/akiramrt/vigiavia-visao-computacional</a></td></tr>
     </table>
   </div>
-  <p class="peq">Entrega única por equipe · relatório gerado em 05/11/2026 · todas as evidências deste documento são reais, coletadas do ambiente publicado (Azure Brazil South), do GitHub Actions e do Prometheus/Grafana.</p>
+  <p class="peq">Entrega única por equipe · versão revisada em 09/11/2026 (a primeira é de 05/11/2026; as correções estão na seção 12) · todas as evidências deste documento são reais, coletadas do ambiente publicado (Azure Brazil South), do GitHub Actions e do Prometheus/Grafana.</p>
 </section>
 
 <h2>1. Resumo e matriz de critérios</h2>
@@ -93,7 +93,7 @@
   <tr><td>Modelos de IA utilizados</td><td>YOLO26n treinado no RDD2022 (mAP@0,5 = 0,585 no teste), exportado para ONNX; executado no servidor (ONNX Runtime) ou no navegador (onnxruntime-web).</td></tr>
   <tr><td>URL do MVP e repositório</td><td><a href="https://ca-vigiavia-prod.happywave-0bf5b4c3.brazilsouth.azurecontainerapps.io">https://ca-vigiavia-prod.happywave-0bf5b4c3.brazilsouth.azurecontainerapps.io</a> · <a href="https://github.com/akiramrt/vigiavia-mvp">https://github.com/akiramrt/vigiavia-mvp</a></td></tr>
   <tr><td>Indicadores de impacto</td><td>Tempo entre detecção e reparo · % de chamados duplicados evitados · buracos detectados por km rodado · precisão confirmada pela zeladoria. Operação: disponibilidade, p95 de latência, taxa de erros e saturação.</td></tr>
-  <tr><td>ODS conectados</td><td>ODS 11 (11.2, 11.3) · ODS 9 (9.1) · ODS 3 (3.6)</td></tr>
+  <tr><td>ODS conectados</td><td><b>11.2</b> (transporte seguro: reparo mais rápido e alerta ao condutor reduzem quedas de motos e bicicletas) · <b>11.3</b> (gestão participativa: o cidadão relata e confirma, e a fila prioriza o que a população aponta) · <b>9.1</b> (infraestrutura resiliente: reparo antes de o buraco crescer e degradar a base do pavimento) · <b>3.6</b> (menos lesões e mortes no trânsito causadas por buracos). Cada meta é acompanhada pelos indicadores da linha acima.</td></tr>
 </table>
 
 <h2>2. Arquitetura</h2>
@@ -108,7 +108,7 @@
   <tr><td>GitHub Actions</td><td>Pipeline DevSecOps: portões de segurança em todo push; publicação e deploy só a partir da <code>main</code>.</td></tr>
   <tr><td>Prometheus + Grafana</td><td>Rodam na máquina da equipe, presos a <code>127.0.0.1</code>, coletando o MVP publicado via HTTPS a cada 15 s (Bearer token). O mesmo conjunto sobe com <code>docker compose --profile observabilidade</code>.</td></tr>
 </table>
-<p>Tudo fica em <b>Brazil South</b> (São Paulo): os dados não saem do país, o que simplifica a LGPD (sem transferência internacional, art. 33) e reduz a latência para o cidadão.</p>
+<p>O que o VigiaVia <b>guarda</b> (relatos e logs) fica em <b>Brazil South</b> (São Paulo), o que reduz a latência e evita transferência internacional desses dados. Alguns pedidos, porém, saem direto do navegador do cidadão para serviços fora do Azure: as bibliotecas da interface (unpkg e jsDelivr), as imagens do mapa (OpenStreetMap) e — só quando o cidadão usa a busca de endereço — o texto digitado (Nominatim, da OpenStreetMap Foundation, no exterior). A seção 7 trata esses fluxos como transferência internacional (LGPD, art. 33).</p>
 
 <h2>3. Container e stack local</h2>
 <div class="duas">
@@ -144,7 +144,7 @@
   <tr><td><code>.tfvars</code> fora do repositório</td><td><code>terraform.tfvars</code> (assinatura e <code>metrics_token</code>) é gerado por <code>scripts/preparar_segredos.py</code> e está no <code>.gitignore</code> (<code>*.tfvars</code>, <code>*.tfstate*</code>, <code>*.tfplan</code>, <code>backend.hcl</code>, <code>.env</code>). A variável do token é <code>sensitive</code>.</td></tr>
   <tr><td>Porta admin nunca aberta a 0.0.0.0/0</td><td>Não há VM nem porta administrativa: o único ponto de entrada é o ingress HTTPS (<code>allow_insecure_connections = false</code>, sem portas adicionais). A operação acontece pelo plano de controle do Azure, autenticado e auditado. O Trivy (config) e o Semgrep (<code>p/terraform</code>) revisam o Terraform em todo push.</td></tr>
   <tr><td>Menor privilégio</td><td>ACR sem admin; app com <b>AcrPull</b>; identidade do GitHub com <b>AcrPush</b> só no ACR e <b>Contributor</b> só no grupo <code>rg-vigiavia-prod</code>; credencial federada com <i>subject</i> que usa os IDs imutáveis do dono e do repositório (<code>repo:akiramrt@128194173/vigiavia-mvp@1446365122:ref:refs/heads/main</code>).</td></tr>
-  <tr><td>Revisão humana do apply</td><td>Cada mudança gera um <code>terraform plan -out</code> salvo como evidência (<code>docs/evidencias/terraform_plan_*.txt</code>, sem valores sensíveis); o <code>apply</code> do plano revisado é executado por um integrante.</td></tr>
+  <tr><td>Revisão humana do apply</td><td>Cada mudança gera um <code>terraform plan -out</code> salvo como evidência (<code>docs/evidencias/terraform_plan_*.txt</code>, sem segredos; os IDs de assinatura, tenant e identidades foram mascarados em 09/11 — são identificadores, não credenciais); o <code>apply</code> do plano revisado é executado por um integrante. Num ambiente novo, a ordem é: base com <code>-target</code>, primeira imagem publicada pelo pipeline e depois o Container App (seção 10).</td></tr>
 </table>
 <pre style="break-inside:auto">## Ingress do Container App: só HTTPS, HTTP inseguro desligado, nenhuma porta administrativa
 {
@@ -183,8 +183,8 @@ Readiness  /health    10              5             3
 ## Papéis da identidade do GitHub (menor privilégio)
 Papel        Escopo
 -----------  -----------------------------------------------------------------------------------------------------------------------------------------------------
-Contributor  /subscriptions/…/resourceGroups/rg-vigiavia-prod
-AcrPush      /subscriptions/…/resourceGroups/rg-vigiavia-prod/providers/Microsoft.ContainerRegistry/registries/acrvigiavia2fplg
+Contributor  /subscriptions/……/resourceGroups/rg-vigiavia-prod
+AcrPush      /subscriptions/……/resourceGroups/rg-vigiavia-prod/providers/Microsoft.ContainerRegistry/registries/acrvigiavia2fplg
 
 ## State remoto do Terraform (Storage com Entra ID, sem chave compartilhada, versionado)
 {
@@ -240,19 +240,19 @@ MVP no ar com o commit 91f82257712cb1de99f06fb4bc9dcc6675a955c6: https://***.hap
   <tr><td><b>Saturação</b></td><td><code>http_requests_em_andamento</code>, <code>rate(process_cpu_seconds_total[1m])</code> (limite: 0,5 vCPU) e memória residente (limite: 1 GiB)</td><td><code>VigiaViaSaturada</code>: ≥ 6 requisições em andamento por 1 min</td></tr>
   <tr><td>Disponibilidade</td><td><code>up</code> do alvo publicado</td><td><code>VigiaViaForaDoAr</code>: <code>up == 0</code> por 1 min</td></tr>
 </table>
-<p><b>Como foi medido.</b> O Prometheus da equipe (127.0.0.1) coleta <code>https://…azurecontainerapps.io/metrics</code> a cada 15 s com o token em arquivo (<code>credentials_file</code>). Para provocar os sinais, <code>scripts/gerar_carga.py</code> disparou 16 clientes simultâneos por 7 minutos (85% <code>POST /v1/deteccoes</code> com imagens reais de amostra e 15% <code>GET /v1/relatos</code>) contra o MVP publicado. Resultado do gerador: <b>3.498 requisições em 420 s (8,3 req/s), 99,9% respondidas com sucesso, latência p50 de 1,93 s e p95 de 2,66 s</b>. O primeiro alerta disparou aos 114 s de carga. No momento dos prints, o Prometheus mostrava em <b>FIRING</b>: <code>VigiaViaLatenciaAlta</code> (valor 1,92 s).</p>
+<p><b>Como foi medido.</b> O Prometheus da equipe (127.0.0.1) coleta <code>https://…azurecontainerapps.io/metrics</code> a cada 15 s com o token em arquivo (<code>credentials_file</code>). Para provocar os sinais, <code>scripts/gerar_carga.py</code> disparou 16 clientes simultâneos por 7 minutos (85% <code>POST /v1/deteccoes</code> com imagens reais de amostra e 15% <code>GET /v1/relatos</code>) contra o MVP publicado. Resultado do gerador: <b>3.498 requisições em 420 s (8,3 req/s), 99,9% respondidas com sucesso, latência p50 de 1,93 s e p95 de 2,66 s</b>. O primeiro alerta disparou aos 114 s de carga. No momento dos prints, o Prometheus mostrava em <b>FIRING</b>: <code>VigiaViaLatenciaAlta</code> (valor 1,92 s). Os registros brutos estão em <code>docs/evidencias/carga/</code>.</p>
 <figure><img src="../evidencias/img/grafana_sinais_de_ouro.png" alt="Dashboard Grafana"><figcaption>Figura 5 — Dashboard “VigiaVia — sinais de ouro” (Grafana) com duas rodadas de carga contra o MVP publicado: 10 clientes (até 23:19:30) e 16 clientes (a partir de 23:21:40). O intervalo sem dados entre elas inclui a troca de revisão do deploy automático.</figcaption></figure>
-<figure><img src="../evidencias/img/prometheus_alertas.png" alt="Alertas Prometheus"><figcaption>Figura 6 — Prometheus durante a carga: <code>VigiaViaLatenciaAlta</code> em FIRING (p95 = 1,92 s) e <code>VigiaViaSaturada</code> em PENDING (7 requisições em andamento).</figcaption></figure>
+<figure><img src="../evidencias/img/prometheus_alertas.png" alt="Alertas Prometheus"><figcaption>Figura 6 — Prometheus durante a carga: <code>VigiaViaLatenciaAlta</code> em FIRING (p95 = 1,92 s) e <code>VigiaViaSaturada</code> em PENDING (7 requisições em andamento). O caminho local do arquivo de regras, ao lado do nome do grupo, foi trocado na imagem pelo caminho no repositório.</figcaption></figure>
 <p><b>Leitura.</b> Com 1 réplica de 0,5 vCPU a detecção satura em cerca de 8,3 req/s: a CPU encosta no limite, a fila chega a 15 requisições em andamento, o p95 passa de 1 s e o alerta de latência dispara — sem nenhum 5xx registrado pela API. O dashboard também revelou um efeito colateral real: às 23:23, cerca de 90 s após o início da rodada de 16 clientes, o processo reiniciou (métrica <code>process_start_time_seconds</code>, queda no tráfego) — 0,1% das requisições do gerador falharam.</p>
 <div class="caixa alerta"><b>Do alerta à causa raiz.</b>
 <ol style="margin:3px 0 2px 18px; padding:0">
-  <li><b>Hipótese 1 — timeout da <i>liveness probe</i></b> (1 s, padrão). Subimos para 5 s nas duas probes pelo Terraform (plano revisado em <code>docs/evidencias/terraform_plan_6_probes.txt</code> e aplicado por um integrante). <b>Reteste com 16 clientes: o container ainda reiniciou 2 vezes</b> (<code>restartCount = 2</code> no Azure). Hipótese refutada.</li>
+  <li><b>Hipótese 1 — timeout da <i>liveness probe</i></b> (1 s, padrão). Subimos para 5 s nas duas probes pelo Terraform (plano revisado em <code>docs/evidencias/terraform_plan_6_probes.txt</code> e aplicado por um integrante). <b>Reteste com 16 clientes: o container ainda reiniciou 2 vezes</b> (<code>restartCount = 2</code> no Azure; o <code>process_start_time_seconds</code> muda duas vezes em <code>docs/evidencias/carga/amostras2.txt</code>). Hipótese refutada.</li>
   <li><b>Causa raiz.</b> A rota <code>POST /v1/deteccoes</code> é <code>async</code> e executava a decodificação da imagem e a inferência ONNX <b>dentro do event loop</b>: com a fila de detecções, o <code>/health</code> consultado pela probe esperava atrás de todas elas. Um teste de regressão reproduziu o defeito — o <code>/health</code> esperou 1,22 s atrás de uma única inferência lenta.</li>
   <li><b>Correção.</b> O trabalho de CPU passou para threads de trabalho (<code>anyio.to_thread</code>), com no máximo 2 inferências simultâneas (<code>VIGIAVIA_INFERENCIAS_SIMULTANEAS</code>); o teste de regressão agora passa no pipeline. O timeout de 5 s ficou como defesa em profundidade.</li>
   <li><b>Verificação em produção</b> (16 clientes por 5 min, commit <a href="https://github.com/akiramrt/vigiavia-mvp/commit/b12e62e"><code>b12e62e</code></a>): 2.482 requisições (8,3 req/s), <b>100,0% com sucesso</b>, p95 de 2,82 s (a CPU continua no limite: escalar ainda é necessário), fila de até 17 requisições, <b><code>/health</code> sempre 200</b> com latência mediana de 0,71 s e máxima de 3,74 s nas 24 medições, e <b>nenhum reinício</b> (<code>restartCount = 0</code>; <code>process_start_time_seconds</code> constante). Amostras em <code>docs/evidencias/reteste_carga_pos_correcao.txt</code>.</li>
 </ol>
 Próximo passo: escala horizontal por requisições concorrentes (regra HTTP do Container Apps), o cenário “Cidade” da seção 8.</div>
-<p class="peq">Observação: nesta máquina o Docker Desktop não iniciou (WSL desativado), então Prometheus e Grafana rodaram como binários nativos com os <b>mesmos arquivos de configuração</b> do repositório, presos a 127.0.0.1; a stack em contêineres é validada pelo job de compose a cada push.</p>
+<p class="peq">Observação: nesta máquina o Docker Desktop não iniciou (WSL desativado), então Prometheus e Grafana rodaram como binários nativos, presos a 127.0.0.1, com as <b>mesmas regras de alerta e o mesmo dashboard</b> do repositório; só a configuração de coleta foi adaptada para apontar para o MVP publicado (sem o alvo local da API). A stack em contêineres é validada pelo job de compose a cada push.</p>
 
 <div style="break-inside:avoid"><h2>7. Segurança, responsabilidade compartilhada e LGPD</h2>
 <h3>Modelo de responsabilidade compartilhada (PaaS / contêiner serverless)</h3>
@@ -265,20 +265,23 @@ Próximo passo: escala horizontal por requisições concorrentes (regra HTTP do 
 <h3>Onde moram os dados pessoais (LGPD)</h3>
 <table>
   <tr><th style="width:21%">Dado</th><th style="width:27%">Onde fica</th><th>Tratamento e retenção</th></tr>
-  <tr><td>Imagem enviada para detecção (pode conter rostos e placas)</td><td>Só na memória do container, durante a requisição</td><td><b>Não é armazenada</b>: descartada após a resposta. Também é possível detectar <b>no próprio navegador</b> (onnxruntime-web), sem enviar a imagem.</td></tr>
+  <tr><td>Imagem enviada para detecção (pode conter rostos e placas)</td><td>Na memória do container durante a requisição (uploads acima de 1 MB passam por um arquivo temporário do servidor web, apagado ao fim da requisição)</td><td><b>Não é armazenada</b>: descartada após a resposta. Também é possível detectar <b>no próprio navegador</b> (onnxruntime-web), sem enviar a imagem.</td></tr>
   <tr><td>Relato: latitude/longitude, severidade, data/hora e recorte da via</td><td>SQLite em <code>/dados</code> no container do Azure Container Apps (Brazil South)</td><td>Minimização: só o recorte do buraco (JPEG ≤ 200 KB validado), sem identificação do cidadão. A localização pode revelar onde alguém estava — por isso não há login, nome nem identificador de aparelho. No MVP o disco é efêmero (dados recriados a cada revisão); em produção: banco gerenciado em Brazil South com criptografia, backup e política de retenção (ex.: 12 meses após o reparo).</td></tr>
   <tr><td>Endereço IP do cliente nos logs de acesso</td><td>Log Analytics <code>log-vigiavia-prod</code> (Brazil South)</td><td>Dado pessoal para fins de segurança; retenção de <b>30 dias</b>, acesso restrito por RBAC, teto de 1 GB/dia.</td></tr>
+  <tr><td>Endereço digitado na busca e área visível do mapa</td><td>Nominatim (OpenStreetMap Foundation, Reino Unido), só quando o cidadão clica em <i>Buscar</i></td><td>O VigiaVia não guarda; o serviço recebe o texto, o IP do navegador e a origem do site. <b>Transferência internacional</b> (art. 33): a tela avisa o uso do Nominatim e há alternativa sem envio (tocar no mapa ou usar o GPS). Em produção: geocodificação própria ou de provedor no Brasil, com contrato.</td></tr>
+  <tr><td>IP do navegador nos pedidos de mapa e de bibliotecas</td><td>OpenStreetMap (tiles), unpkg e jsDelivr (CDNs globais)</td><td>Pedidos técnicos do navegador; a página manda o <i>Referer</i> só com a origem (sem caminho) e só para o OpenStreetMap, que o exige. Em produção: servir bibliotecas e tiles pelo próprio domínio, em Brazil South.</td></tr>
   <tr><td>Métricas</td><td>Prometheus da equipe</td><td>Sem dado pessoal: rótulos só de método, modelo de rota e status.</td></tr>
   <tr><td>Segredos e state do Terraform</td><td>Storage privado (Entra ID) e cofre do Container App</td><td>Não são dados pessoais, mas o state contém o token: nunca vai para o git; versionado e com acesso só por identidade.</td></tr>
 </table>
 <p>Base legal: execução de políticas públicas pela administração (LGPD, art. 7º, III, e art. 23), com transparência ao cidadão (finalidade: zeladoria de vias). A validação humana na fila da zeladoria evita decisões automatizadas sobre o cidadão.</p>
+<div class="caixa alerta"><b>Limitação conhecida do MVP: a fila da zeladoria não tem login.</b> Nesta demonstração, qualquer pessoa com o link pode validar, descartar ou resolver relatos (<code>PATCH /v1/relatos/{id}</code>) e ver a fila com as localizações (<code>GET /v1/relatos</code>). Mantivemos assim para a banca testar o fluxo completo. Em produção, essas rotas exigem login dos agentes da subprefeitura (Entra ID), cada decisão fica registrada com quem a tomou (trilha de auditoria) e o público vê só dados agregados.</div>
 
 <h2>8. Estimativa de custo</h2>
 <p>Calculada por <code>scripts/estimar_custo.py</code> com a <b>Azure Retail Prices API</b> (Brazil South, preços de varejo em USD) e a <b>PTAX do Banco Central</b> de 04/11/2026 (R$ 5,4778). Resultado em <a href="https://github.com/akiramrt/vigiavia-mvp/blob/main/docs/custos.json"><code>docs/custos.json</code></a>.</p>
-<div style='break-inside:avoid'><table><tr><th>Item (Brazil South)</th><th>MVP (1 réplica 0,5 vCPU / 1 GiB, 5% ativa)</th><th>Cidade (4 réplicas 1 vCPU / 2 GiB, 40% ativas)</th></tr><tr><td>Container Apps — vCPU ativa</td><td>US$ 0,00</td><td>US$ 96,60</td></tr><tr><td>Container Apps — vCPU ociosa</td><td>US$ 3,74</td><td>US$ 18,92</td></tr><tr><td>Container Apps — memória</td><td>US$ 6,80</td><td>US$ 61,99</td></tr><tr><td>Container Apps — requisições</td><td>US$ 0,00</td><td>US$ 7,20</td></tr><tr><td>Container Registry Basic</td><td>US$ 5,06</td><td>US$ 5,06</td></tr><tr><td>Log Analytics (ingestão)</td><td>US$ 0,00</td><td>US$ 0,00</td></tr><tr><td>Storage do state (Terraform)</td><td>US$ 0,00</td><td>US$ 0,00</td></tr><tr><th>Total mensal</th><th>US$ 15,61 · R$ 85,53</th><th>US$ 189,77 · R$ 1.039,54</th></tr><tr><td>Requisições/mês consideradas</td><td>300.000</td><td>20.000.000</td></tr></table></div>
-<p>O MVP custa cerca de <b>US$ 15,61/mês (R$ 85,53)</b> e cabe no crédito do Azure for Students. Os maiores itens são a réplica sempre ligada (sem <i>cold start</i>) e o ACR Basic. As franquias mensais gratuitas do Container Apps (vCPU-s, GiB-s e 2 milhões de requisições) e os 5 GB de ingestão do Log Analytics zeram os demais itens. Na escala de cidade (4 réplicas de 1 vCPU / 2 GiB, 20 milhões de requisições/mês) o custo vai a <b>US$ 189,77/mês (R$ 1.039,54)</b>.</p>
+<div style='break-inside:avoid'><table><tr><th>Item (Brazil South)</th><th>MVP (1 réplica 0,5 vCPU / 1 GiB, 5% ativa)</th><th>Cidade (4 réplicas 1 vCPU / 2 GiB, 40% ativas)</th></tr><tr><td>Container Apps — vCPU ativa</td><td>US$ 0,00</td><td>US$ 96,60</td></tr><tr><td>Container Apps — vCPU ociosa</td><td>US$ 3,74</td><td>US$ 18,92</td></tr><tr><td>Container Apps — memória</td><td>US$ 6,80</td><td>US$ 61,99</td></tr><tr><td>Container Apps — requisições</td><td>US$ 0,00</td><td>US$ 7,20</td></tr><tr><td>Container Registry Basic</td><td>US$ 5,06</td><td>US$ 5,06</td></tr><tr><td>Log Analytics (ingestão)</td><td>US$ 0,00</td><td>US$ 69,00</td></tr><tr><td>Storage do state (Terraform)</td><td>US$ 0,00</td><td>US$ 0,00</td></tr><tr><th>Total mensal</th><th>US$ 15,61 · R$ 85,53</th><th>US$ 258,77 · R$ 1.417,51</th></tr><tr><td>Requisições/mês consideradas</td><td>300.000</td><td>20.000.000</td></tr></table></div>
+<p>O MVP custa cerca de <b>US$ 15,61/mês (R$ 85,53)</b> e cabe no crédito do Azure for Students. Os maiores itens são a réplica sempre ligada (sem <i>cold start</i>) e o ACR Basic. No MVP, as franquias mensais gratuitas do Container Apps (vCPU-s, GiB-s e 2 milhões de requisições) e os 5 GB de ingestão do Log Analytics zeram os demais itens. Na escala de cidade (4 réplicas de 1 vCPU / 2 GiB, 20 milhões de requisições e 20 GB de logs por mês) o custo vai a <b>US$ 258,77/mês (R$ 1.417,51)</b>; a ingestão de logs acima da franquia (US$ 4,60/GB) soma US$ 69,00 e é o terceiro maior item. Na versão de 05/11, o script usava por engano a faixa gratuita da ingestão e o total da cidade saía US$ 189,77.</p>
 
-<h2>9. Problemas reais encontrados e como foram resolvidos</h2>
+<div style="break-inside:avoid"><h2>9. Problemas reais encontrados e como foram resolvidos</h2>
 <table>
   <tr><th style="width:30%">Problema</th><th>Causa e solução</th></tr>
   <tr><td>Login OIDC falhava (<code>AADSTS700213</code>)</td><td>O GitHub passou a emitir o claim <code>sub</code> com IDs imutáveis (<code>repo:dono@id/repo@id:ref:…</code>). O <i>subject</i> virou variável do Terraform com esse formato — o que ainda impede que um repositório recriado com o mesmo nome herde o acesso.</td></tr>
@@ -289,7 +292,7 @@ Próximo passo: escala horizontal por requisições concorrentes (regra HTTP do 
   <tr><td>Drift no ambiente do Container Apps</td><td>O Azure adiciona o perfil “Consumption” e o plano queria recriar o ambiente. O perfil foi declarado no Terraform (o código continua sendo a fonte da verdade).</td></tr>
   <tr><td>Job de compose intermitente</td><td>Prometheus e Grafana não têm <code>HEALTHCHECK</code>; o teste batia antes de aceitarem conexões. <code>curl --retry --retry-all-errors</code>.</td></tr>
   <tr><td>Container reiniciava sob carga</td><td>Visto no dashboard durante o teste de carga. Aumentar o timeout das probes (1 s → 5 s, via Terraform) não resolveu; a causa era a inferência rodando no event loop da rota <code>async</code>, que travava o <code>/health</code>. Inferência em threads com limite de 2 simultâneas, teste de regressão e reteste em produção sem reinício (seção 6).</td></tr>
-</table>
+</table></div>
 
 <h2>10. Como reproduzir</h2>
 <pre># 1) Local (Docker): a mesma stack do pipeline
@@ -299,24 +302,42 @@ docker compose --profile observabilidade up -d   # + Prometheus :9090 e Grafana 
 
 # 2) Portões de segurança na máquina (os mesmos do pipeline)
 pip install -r requirements-dev.txt &amp;&amp; pytest -q
-gitleaks git . &amp;&amp; trivy config . &amp;&amp; semgrep scan --config p/python --config p/secrets --error
+gitleaks git . &amp;&amp; trivy config . --severity HIGH,CRITICAL
+semgrep scan --config p/python --config p/javascript --config p/secrets --config p/dockerfile --config p/terraform --error
 
-# 3) Nuvem, uma vez: state remoto, variáveis fora do git, plano revisado por uma pessoa
-az login &amp;&amp; bash infra/bootstrap/criar_backend.sh brazilsouth
-python scripts/preparar_segredos.py --subscription &lt;assinatura&gt;   # infra/terraform.tfvars
-cd infra &amp;&amp; terraform init -backend-config=backend.hcl &amp;&amp; terraform plan -out=plano.tfplan
-terraform apply plano.tfplan
-powershell -File ..\scripts\configurar_github.ps1 -HabilitarDeploy   # GitHub Secrets/Variables (OIDC)
+# 3) Nuvem, uma vez (o Container App precisa de uma imagem que ainda não existe num ACR novo)
+az login &amp;&amp; bash infra/bootstrap/criar_backend.sh brazilsouth     # state remoto (Storage + Entra ID)
+python scripts/preparar_segredos.py --subscription &lt;assinatura&gt;   # infra/terraform.tfvars (fora do git)
+cd infra &amp;&amp; terraform init -backend-config=backend.hcl
+#  a) base: grupo, Log Analytics, ACR, identidades, papéis, ambiente e OIDC (sem o Container App)
+terraform plan -out=base.tfplan -target=azurerm_container_app_environment.env -target=azurerm_role_assignment.app_pull \
+  -target=azurerm_role_assignment.github_push -target=azurerm_role_assignment.github_deploy \
+  -target=azurerm_federated_identity_credential.github_main
+terraform apply base.tfplan
+#  b) secrets do GitHub + PUBLICAR_IMAGEM=true; um push na main publica a 1ª imagem (tag = commit)
+powershell -File ..\scripts\configurar_github.ps1
+#  c) Container App com essa imagem; depois, deploy automático ligado
+terraform plan -out=app.tfplan -var tag_imagem=&lt;commit publicado&gt; &amp;&amp; terraform apply app.tfplan
+powershell -File ..\scripts\configurar_github.ps1 -HabilitarDeploy
 
 # 4) Daí em diante: git push na main = portões de segurança + deploy automático + smoke test</pre>
-<p>Passo a passo completo, com a ficha técnica, no <a href="https://github.com/akiramrt/vigiavia-mvp#readme">README</a>. Telas do MVP publicado:</p>
-<div class="duas">
-<figure><img src="../evidencias/img/mvp_cidadao.png" alt="MVP cidadão"><figcaption>Figura 7 — Visão do cidadão: detecção de buraco numa imagem de exemplo.</figcaption></figure>
-<figure><img src="../evidencias/img/mvp_zeladoria.png" alt="MVP zeladoria"><figcaption>Figura 8 — Visão da zeladoria: fila priorizada e mapa dos relatos.</figcaption></figure>
-</div>
+<p>Passo a passo completo, com a ficha técnica, no <a href="https://github.com/akiramrt/vigiavia-mvp#readme">README</a>. Este relatório é gerado por <code>docs/relatorio/gerar_relatorio.py</code> a partir das evidências do repositório. Telas do MVP publicado (09/11/2026):</p>
+<figure><img src="../evidencias/img/mvp_cidadao.png" alt="MVP cidadão" style="max-height:120mm"><figcaption>Figura 7 — Visão do cidadão: detecção numa imagem de exemplo (o vídeo também pode ser pausado no buraco) e mapa para marcar o local do relato.</figcaption></figure>
+<figure><img src="../evidencias/img/mvp_zeladoria.png" alt="MVP zeladoria" style="max-height:120mm"><figcaption>Figura 8 — Visão da zeladoria: indicadores, mapa dos relatos e fila priorizada com as ações Validar, Descartar e Resolvido (relatos de demonstração).</figcaption></figure>
 
 <h2>11. Conclusão</h2>
 <p>O VigiaVia está no ar em <a href="https://ca-vigiavia-prod.happywave-0bf5b4c3.brazilsouth.azurecontainerapps.io">https://ca-vigiavia-prod.happywave-0bf5b4c3.brazilsouth.azurecontainerapps.io</a> e só chega lá passando por portões automáticos: nenhum segredo no histórico, nenhum padrão inseguro no código, testes e stack funcionando, nenhuma vulnerabilidade HIGH/CRITICAL corrigível na imagem. A demonstração mostrou o ponto central do DevSecOps: uma mudança que <b>passa nos testes</b> pode ser <b>perigosa</b>, e foi o portão de segurança — não uma revisão manual — que impediu a imagem vulnerável de chegar ao cidadão. A infraestrutura é reproduzível por código, sem senhas de nuvem e sem portas administrativas, e a observabilidade mostrou, com carga real, onde o serviço satura e quando precisa escalar — e revelou um defeito (a inferência travando o event loop e derrubando a liveness probe) que foi investigado até a causa raiz, corrigido com teste de regressão e verificado em produção.</p>
+
+<h2>12. Revisão de 09/11/2026</h2>
+<p>Esta versão substitui a de 05/11/2026 depois de uma revisão independente do relatório contra o código e o ambiente publicado. Correções:</p>
+<ul>
+  <li><b>Custo (seção 8):</b> <code>scripts/estimar_custo.py</code> pegava a faixa gratuita da ingestão do Log Analytics; o cenário Cidade passou de US$ 189,77 para <b>US$ 258,77/mês</b>. O custo do MVP não mudou.</li>
+  <li><b>LGPD (seções 2 e 7):</b> a frase “os dados não saem do país” deixou de valer depois da busca de endereço (05/11); agora a arquitetura e a tabela de dados pessoais mostram os serviços externos (Nominatim, OpenStreetMap, CDNs) e o tratamento de uploads acima de 1 MB.</li>
+  <li><b>Limitação declarada:</b> a fila da zeladoria não tem login no MVP (seção 7).</li>
+  <li><b>Reprodução (seção 10 e README):</b> o passo a passo da nuvem agora segue a ordem real (base com <code>-target</code>, primeira imagem pelo pipeline, Container App) e o comando do Semgrep usa as cinco configurações do pipeline.</li>
+  <li><b>Evidências:</b> registros brutos dos testes de carga em <code>docs/evidencias/carga/</code> (inclusive os 2 reinícios); IDs do Azure mascarados; caminho local trocado no print do Prometheus; telas da versão publicada; gerador do relatório versionado em <code>docs/relatorio/</code>.</li>
+  <li><b>Interface publicada</b> desde a primeira versão: vídeo com controles e análise mais rápida, mapa para marcar o local do relato, mapa da zeladoria com <i>Referer</i> exigido pelo OpenStreetMap, fila com todas as colunas e a correção de uma faixa preta sobre as fotos — cada mudança passou pelo pipeline completo.</li>
+</ul>
 
 </body>
 </html>

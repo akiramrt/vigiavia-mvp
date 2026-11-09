@@ -27,7 +27,7 @@
 | **Modelos de IA utilizados** | YOLO26n treinado no RDD2022 (mAP@0,5 = 0,585 no teste), exportado para ONNX; executado no servidor (ONNX Runtime) ou no navegador (onnxruntime-web). |
 | **URL do MVP e repositório** | https://ca-vigiavia-prod.happywave-0bf5b4c3.brazilsouth.azurecontainerapps.io · https://github.com/akiramrt/vigiavia-mvp |
 | **Indicadores de impacto** | Tempo entre detecção e reparo · % de chamados duplicados evitados · buracos detectados por km rodado · precisão das detecções confirmadas pela zeladoria. Operação: disponibilidade, p95 de latência, taxa de erros e saturação (4 sinais de ouro). |
-| **ODS conectados** | ODS 11 (11.2, 11.3) · ODS 9 (9.1) · ODS 3 (3.6) |
+| **ODS conectados** | **11.2** transporte seguro (reparo mais rápido e alerta ao condutor reduzem quedas de motos e bicicletas) · **11.3** gestão participativa (o cidadão relata e confirma; a fila prioriza o que a população aponta) · **9.1** infraestrutura resiliente (reparo antes de o buraco crescer) · **3.6** menos lesões e mortes no trânsito. Cada meta é acompanhada pelos indicadores acima. |
 
 ## Arquitetura
 
@@ -58,16 +58,27 @@ gitleaks dir . && trivy config . --severity HIGH,CRITICAL && semgrep scan --conf
 ```
 
 ### Infraestrutura (Azure, uma vez)
+Num ACR novo ainda não existe imagem para o Container App, então a criação tem três etapas (a mesma ordem dos planos
+em `docs/evidencias/terraform_plan_*.txt`). Cada plano é revisado por uma pessoa antes do `apply`.
 ```bash
 az login && az account set -s <assinatura>
 bash infra/bootstrap/criar_backend.sh brazilsouth           # state remoto (Storage + Entra ID)
 python scripts/preparar_segredos.py --subscription <assinatura>   # infra/terraform.tfvars (fora do git)
-cd infra && terraform init -backend-config=backend.hcl && terraform plan -out=plano.tfplan
-terraform apply plano.tfplan                                 # aplicado por uma pessoa, após revisar o plano
+cd infra && terraform init -backend-config=backend.hcl
+# a) base: grupo, Log Analytics, ACR, identidades, papéis, ambiente e OIDC (sem o Container App)
+terraform plan -out=base.tfplan -target=azurerm_container_app_environment.env -target=azurerm_role_assignment.app_pull \
+  -target=azurerm_role_assignment.github_push -target=azurerm_role_assignment.github_deploy \
+  -target=azurerm_federated_identity_credential.github_main
+terraform apply base.tfplan
+# b) GitHub Secrets (identificadores) + PUBLICAR_IMAGEM=true; um push na main publica a 1ª imagem (tag = commit)
+powershell -File ../scripts/configurar_github.ps1
+# c) Container App com essa imagem e, depois, deploy automático (DEPLOY_HABILITADO=true)
+terraform plan -out=app.tfplan -var tag_imagem=<commit publicado> && terraform apply app.tfplan
+powershell -File ../scripts/configurar_github.ps1 -HabilitarDeploy
 ```
-Depois, cadastre em **Settings → Secrets and variables → Actions** os valores de `terraform output`:
-`AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, `AZURE_SUBSCRIPTION_ID`, `ACR_NOME`, `ACA_NOME`, `AZURE_RG` (secrets) e
-`PUBLICAR_IMAGEM=true`, `DEPLOY_HABILITADO=true` (variables). A partir daí todo push na `main` é implantado.
+O script cadastra em **Settings → Secrets and variables → Actions** `AZURE_CLIENT_ID`, `AZURE_TENANT_ID`,
+`AZURE_SUBSCRIPTION_ID`, `ACR_NOME`, `ACA_NOME`, `AZURE_RG` (secrets) e as variables `PUBLICAR_IMAGEM` e
+`DEPLOY_HABILITADO`. A partir daí todo push na `main` é implantado.
 
 ### Observabilidade apontando para a nuvem
 ```bash
@@ -78,8 +89,11 @@ python scripts/gerar_carga.py --url https://ca-vigiavia-prod.happywave-0bf5b4c3.
 
 ## Custos (preços reais, Brazil South)
 
-`python scripts/estimar_custo.py` consulta a Azure Retail Prices API e a PTAX do Banco Central:
-**MVP ≈ US$ 15,61/mês (R$ 85,53)** — coberto pelo crédito do Azure for Students. Detalhes em [`docs/custos.json`](docs/custos.json).
+`python scripts/estimar_custo.py --data-ptax 2026-11-04` consulta a Azure Retail Prices API e a PTAX do Banco Central:
+**MVP ≈ US$ 15,61/mês (R$ 85,53)** — coberto pelo crédito do Azure for Students. Na escala de cidade (4 réplicas,
+20 milhões de requisições e 20 GB de logs por mês): **US$ 258,77/mês (R$ 1.417,51)**. Detalhes em
+[`docs/custos.json`](docs/custos.json). (Até 09/11 o script usava a faixa gratuita da ingestão de logs e a cidade saía
+US$ 189,77.)
 
 ## Evidências
 
@@ -93,6 +107,11 @@ python scripts/gerar_carga.py --url https://ca-vigiavia-prod.happywave-0bf5b4c3.
 | Planos do Terraform revisados antes de cada `apply` | [docs/evidencias](docs/evidencias) (`terraform_plan_*.txt`) |
 | Dashboard dos sinais de ouro e alerta disparado sob carga | [docs/evidencias/img](docs/evidencias/img) e [relatório (PDF)](docs/relatorio/VigiaVia_Secure_DevOps.pdf) |
 | Achado da observabilidade: reinício sob carga → timeout das probes (não resolveu) → causa raiz: inferência no event loop → correção com teste de regressão → reteste sem reinício | [plano das probes](docs/evidencias/terraform_plan_6_probes.txt) · [commit b12e62e](https://github.com/akiramrt/vigiavia-mvp/commit/b12e62e) · [reteste](docs/evidencias/reteste_carga_pos_correcao.txt) |
+| Registros brutos dos testes de carga (rodada inicial, 2 reinícios no reteste das probes, 0 após a correção) | [docs/evidencias/carga](docs/evidencias/carga) |
+| Relatório gerado a partir destas evidências | [`docs/relatorio/gerar_relatorio.py`](docs/relatorio/gerar_relatorio.py) + [`modelo.html`](docs/relatorio/modelo.html) |
+
+Os IDs de assinatura, tenant e identidades do Azure foram mascarados nas evidências em 09/11/2026 (são identificadores,
+não credenciais).
 
 ## Segurança e LGPD (resumo)
 
@@ -100,6 +119,11 @@ python scripts/gerar_carga.py --url https://ca-vigiavia-prod.happywave-0bf5b4c3.
   o GitHub usa OIDC (identidade federada) — não há senha de nuvem para vazar.
 * **Dados pessoais:** a API **não guarda imagens enviadas**; um relato guarda só lat/lon, severidade e o recorte da via
   (SQLite dentro do container, região Brazil South). Logs da plataforma no Log Analytics por 30 dias.
+* **Fora do Azure, direto do navegador:** tiles do mapa (OpenStreetMap), bibliotecas (unpkg, jsDelivr) e, só quando o
+  cidadão busca um endereço, o texto digitado (Nominatim, no exterior: transferência internacional, LGPD art. 33). Há
+  alternativa sem envio (tocar no mapa ou GPS). Em produção: servir tudo pelo próprio domínio, em Brazil South.
+* **Limitação do MVP:** a fila da zeladoria não tem login (qualquer pessoa com o link pode validar ou descartar), para a
+  banca testar o fluxo; em produção, login dos agentes (Entra ID) e trilha de auditoria.
 * **Responsabilidade compartilhada:** Microsoft cuida do hardware, rede física, hipervisor, plataforma do Container Apps,
   TLS do ingress; a equipe cuida do código, da imagem e suas dependências, identidades/RBAC, segredos, dados e configuração.
 

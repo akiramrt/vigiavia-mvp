@@ -1,7 +1,7 @@
 ﻿Acquiring state lock. This may take a few moments...
-azurerm_resource_group.rg: Refreshing state... [id=/subscriptions/cf0fbc8c-b1cc-4ccd-8ad9-ecfd099006c8/resourceGroups/rg-vigiavia-prod]
-azurerm_user_assigned_identity.github: Refreshing state... [id=/subscriptions/cf0fbc8c-b1cc-4ccd-8ad9-ecfd099006c8/resourceGroups/rg-vigiavia-prod/providers/Microsoft.ManagedIdentity/userAssignedIdentities/id-vigiavia-prod-github]
-azurerm_federated_identity_credential.github_main: Refreshing state... [id=/subscriptions/cf0fbc8c-b1cc-4ccd-8ad9-ecfd099006c8/resourceGroups/rg-vigiavia-prod/providers/Microsoft.ManagedIdentity/userAssignedIdentities/id-vigiavia-prod-github/federatedIdentityCredentials/github-main]
+azurerm_resource_group.rg: Refreshing state... [id=/subscriptions/cf0f…/resourceGroups/rg-vigiavia-prod]
+azurerm_user_assigned_identity.github: Refreshing state... [id=/subscriptions/cf0f…/resourceGroups/rg-vigiavia-prod/providers/Microsoft.ManagedIdentity/userAssignedIdentities/id-vigiavia-prod-github]
+azurerm_federated_identity_credential.github_main: Refreshing state... [id=/subscriptions/cf0f…/resourceGroups/rg-vigiavia-prod/providers/Microsoft.ManagedIdentity/userAssignedIdentities/id-vigiavia-prod-github/federatedIdentityCredentials/github-main]
 
 Terraform used the selected providers to generate the following execution
 plan. Resource actions are indicated with the following symbols:
@@ -11,7 +11,7 @@ Terraform will perform the following actions:
 
   # azurerm_federated_identity_credential.github_main will be updated in-place
   ~ resource "azurerm_federated_identity_credential" "github_main" {
-        id                        = "/subscriptions/cf0fbc8c-b1cc-4ccd-8ad9-ecfd099006c8/resourceGroups/rg-vigiavia-prod/providers/Microsoft.ManagedIdentity/userAssignedIdentities/id-vigiavia-prod-github/federatedIdentityCredentials/github-main"
+        id                        = "/subscriptions/cf0f…/resourceGroups/rg-vigiavia-prod/providers/Microsoft.ManagedIdentity/userAssignedIdentities/id-vigiavia-prod-github/federatedIdentityCredentials/github-main"
         name                      = "github-main"
       ~ subject                   = "repo:akiramrt/vigiavia-mvp:ref:refs/heads/main" -> "repo:akiramrt@128194173/vigiavia-mvp@1446365122:ref:refs/heads/main"
         # (5 unchanged attributes hidden)

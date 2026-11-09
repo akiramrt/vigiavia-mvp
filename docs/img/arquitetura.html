@@ -64,27 +64,30 @@
 
   <!-- coluna 3: usuários e observabilidade -->
   <text x="1256" y="108" class="h">CIDADÃO, ZELADORIA E OBSERVABILIDADE</text>
-  <rect x="1256" y="120" width="408" height="150" rx="16" fill="#f1fbf5" stroke="#2f9e5b"/>
+  <rect x="1256" y="120" width="408" height="206" rx="16" fill="#f1fbf5" stroke="#2f9e5b"/>
   <text x="1276" y="152" class="tb">Cidadão (celular) e zeladoria</text>
   <text x="1276" y="178" class="t">navegador → https://ca-vigiavia-prod…</text>
   <text x="1276" y="202" class="tt">câmera e GPS exigem HTTPS (contexto seguro)</text>
   <text x="1276" y="224" class="tt">modo "no aparelho": ONNX no navegador,</text>
   <text x="1276" y="244" class="tt">a imagem nem sai do celular</text>
-  <rect x="1256" y="300" width="408" height="380" rx="16" fill="#f6f8fa" stroke="#c9d2db"/>
-  <text x="1276" y="332" class="tb">Observabilidade (máquina da equipe)</text>
-  <rect x="1276" y="350" width="368" height="100" rx="10" fill="#fff" stroke="#d0021b" stroke-width="2"/>
-  <text x="1292" y="378" class="tb">Prometheus</text><text x="1292" y="400" class="tt">coleta HTTPS /metrics a cada 15 s (Bearer)</text><text x="1292" y="420" class="tt">regras: fora do ar, latência p95 > 1 s,</text><text x="1292" y="438" class="tt">erros 5xx > 5%, saturação</text>
-  <rect x="1276" y="470" width="368" height="110" rx="10" fill="#fff" stroke="#f5a623" stroke-width="2"/>
-  <text x="1292" y="498" class="tb">Grafana — 4 sinais de ouro</text><text x="1292" y="520" class="tt">latência · tráfego · erros · saturação</text><text x="1292" y="540" class="tt">+ inferência do modelo e negócio</text><text x="1292" y="560" class="tt">(dashboard versionado como código)</text>
-  <text x="1276" y="612" class="tt">Mesma stack sobe com docker compose (perfil</text><text x="1276" y="632" class="tt">"observabilidade"), validada no pipeline.</text>
-  <rect x="1256" y="700" width="408" height="110" rx="16" fill="#fff" stroke="#c9d2db"/>
-  <text x="1276" y="730" class="tb">Dependabot</text><text x="1276" y="754" class="tt">pip, Docker, Actions e Terraform: correções</text><text x="1276" y="774" class="tt">chegam como PR e passam pelo mesmo pipeline</text>
+  <text x="1276" y="272" class="tt" style="fill:#9a3412">fora do Azure, direto do navegador: mapa</text>
+  <text x="1276" y="292" class="tt" style="fill:#9a3412">(OpenStreetMap), busca de endereço (Nominatim)</text>
+  <text x="1276" y="312" class="tt" style="fill:#9a3412">e bibliotecas (unpkg, jsDelivr) — ver LGPD</text>
+  <rect x="1256" y="346" width="408" height="350" rx="16" fill="#f6f8fa" stroke="#c9d2db"/>
+  <text x="1276" y="376" class="tb">Observabilidade (máquina da equipe)</text>
+  <rect x="1276" y="392" width="368" height="100" rx="10" fill="#fff" stroke="#d0021b" stroke-width="2"/>
+  <text x="1292" y="420" class="tb">Prometheus</text><text x="1292" y="442" class="tt">coleta HTTPS /metrics a cada 15 s (Bearer)</text><text x="1292" y="462" class="tt">regras: fora do ar, latência p95 > 1 s,</text><text x="1292" y="480" class="tt">erros 5xx > 5%, saturação</text>
+  <rect x="1276" y="506" width="368" height="110" rx="10" fill="#fff" stroke="#f5a623" stroke-width="2"/>
+  <text x="1292" y="534" class="tb">Grafana — 4 sinais de ouro</text><text x="1292" y="556" class="tt">latência · tráfego · erros · saturação</text><text x="1292" y="576" class="tt">+ inferência do modelo e negócio</text><text x="1292" y="596" class="tt">(dashboard versionado como código)</text>
+  <text x="1276" y="650" class="tt">Mesma stack sobe com docker compose (perfil</text><text x="1276" y="670" class="tt">"observabilidade"), validada no pipeline.</text>
+  <rect x="1256" y="712" width="408" height="98" rx="16" fill="#fff" stroke="#c9d2db"/>
+  <text x="1276" y="740" class="tb">Dependabot</text><text x="1276" y="764" class="tt">pip, Docker, Actions e Terraform: correções</text><text x="1276" y="784" class="tt">chegam como PR e passam pelo mesmo pipeline</text>
 
   <path d="M516 693 H 566 V 130 H 1046 V 138" stroke="#4a5866" stroke-width="2" fill="none" marker-end="url(#s)"/>
   <path d="M516 612 H 552 V 184 H 604" stroke="#4a5866" stroke-width="2" fill="none" marker-end="url(#s)"/>
   <path d="M1046 228 V 250" stroke="#4a5866" stroke-width="2" marker-end="url(#s)"/>
   <path d="M1254 195 C 1220 195, 1220 300, 1188 300" stroke="#2f9e5b" stroke-width="2.4" fill="none" marker-end="url(#s)"/>
-  <path d="M1274 400 C 1230 400, 1230 500, 1188 500" stroke="#d0021b" stroke-width="2" fill="none" marker-end="url(#s)" stroke-dasharray="6 4"/>
+  <path d="M1274 442 C 1230 442, 1230 500, 1188 500" stroke="#d0021b" stroke-width="2" fill="none" marker-end="url(#s)" stroke-dasharray="6 4"/>
   <text x="36" y="852" class="tt">Legenda: vermelho = portão de segurança que barra o pipeline · laranja = acesso à nuvem via OIDC · verde = caminho do cidadão · tracejado = coleta de métricas</text>
 </svg>
 </body></html>

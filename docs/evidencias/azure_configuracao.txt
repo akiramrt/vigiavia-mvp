@@ -57,8 +57,8 @@ e16136a8f5820d57ba019998d7e1ef57959fd1c6  2026-11-05T01:41:43.8489565Z  0
 ## Papéis da identidade do GitHub (menor privilégio)
 Papel        Escopo
 -----------  -----------------------------------------------------------------------------------------------------------------------------------------------------
-Contributor  /subscriptions/cf0fbc8c-b1cc-4ccd-8ad9-ecfd099006c8/resourceGroups/rg-vigiavia-prod
-AcrPush      /subscriptions/cf0fbc8c-b1cc-4ccd-8ad9-ecfd099006c8/resourceGroups/rg-vigiavia-prod/providers/Microsoft.ContainerRegistry/registries/acrvigiavia2fplg
+Contributor  /subscriptions/cf0f…/resourceGroups/rg-vigiavia-prod
+AcrPush      /subscriptions/cf0f…/resourceGroups/rg-vigiavia-prod/providers/Microsoft.ContainerRegistry/registries/acrvigiavia2fplg
 
 ## State remoto do Terraform (Storage com Entra ID, sem chave compartilhada, versionado)
 {

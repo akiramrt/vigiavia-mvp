@@ -1,17 +1,17 @@
 ﻿Acquiring state lock. This may take a few moments...
 random_string.sufixo: Refreshing state... [id=2fplg]
 data.azurerm_client_config.atual: Reading...
-azurerm_resource_group.rg: Refreshing state... [id=/subscriptions/cf0fbc8c-b1cc-4ccd-8ad9-ecfd099006c8/resourceGroups/rg-vigiavia-prod]
+azurerm_resource_group.rg: Refreshing state... [id=/subscriptions/cf0f…/resourceGroups/rg-vigiavia-prod]
 data.azurerm_client_config.atual: Read complete after 0s [id=Y2xpZW50Q29uZmlncy9jbGllbnRJZD0wNGIwNzc5NS04ZGRiLTQ2MWEtYmJlZS0wMmY5ZTFiZjdiNDY7b2JqZWN0SWQ9ZDA1MWYxOTItMjMzZS00Yjc1LWJmOWQtZTg2OTVmZGI2ZTFjO3N1YnNjcmlwdGlvbklkPWNmMGZiYzhjLWIxY2MtNGNjZC04YWQ5LWVjZmQwOTkwMDZjODt0ZW5hbnRJZD0xMWRiYmZlMi04OWI4LTQ1NDktYmUxMC1jZWMzNjRlNTk1NTE=]
-azurerm_user_assigned_identity.github: Refreshing state... [id=/subscriptions/cf0fbc8c-b1cc-4ccd-8ad9-ecfd099006c8/resourceGroups/rg-vigiavia-prod/providers/Microsoft.ManagedIdentity/userAssignedIdentities/id-vigiavia-prod-github]
-azurerm_user_assigned_identity.app: Refreshing state... [id=/subscriptions/cf0fbc8c-b1cc-4ccd-8ad9-ecfd099006c8/resourceGroups/rg-vigiavia-prod/providers/Microsoft.ManagedIdentity/userAssignedIdentities/id-vigiavia-prod-app]
-azurerm_container_registry.acr: Refreshing state... [id=/subscriptions/cf0fbc8c-b1cc-4ccd-8ad9-ecfd099006c8/resourceGroups/rg-vigiavia-prod/providers/Microsoft.ContainerRegistry/registries/acrvigiavia2fplg]
-azurerm_log_analytics_workspace.logs: Refreshing state... [id=/subscriptions/cf0fbc8c-b1cc-4ccd-8ad9-ecfd099006c8/resourceGroups/rg-vigiavia-prod/providers/Microsoft.OperationalInsights/workspaces/log-vigiavia-prod]
-azurerm_federated_identity_credential.github_main: Refreshing state... [id=/subscriptions/cf0fbc8c-b1cc-4ccd-8ad9-ecfd099006c8/resourceGroups/rg-vigiavia-prod/providers/Microsoft.ManagedIdentity/userAssignedIdentities/id-vigiavia-prod-github/federatedIdentityCredentials/github-main]
-azurerm_role_assignment.github_deploy: Refreshing state... [id=/subscriptions/cf0fbc8c-b1cc-4ccd-8ad9-ecfd099006c8/resourceGroups/rg-vigiavia-prod/providers/Microsoft.Authorization/roleAssignments/3464cfda-9134-6677-956a-b25ca584a9ca]
-azurerm_container_app_environment.env: Refreshing state... [id=/subscriptions/cf0fbc8c-b1cc-4ccd-8ad9-ecfd099006c8/resourceGroups/rg-vigiavia-prod/providers/Microsoft.App/managedEnvironments/cae-vigiavia-prod]
-azurerm_role_assignment.app_pull: Refreshing state... [id=/subscriptions/cf0fbc8c-b1cc-4ccd-8ad9-ecfd099006c8/resourceGroups/rg-vigiavia-prod/providers/Microsoft.ContainerRegistry/registries/acrvigiavia2fplg/providers/Microsoft.Authorization/roleAssignments/a25ca7e9-a288-3bee-bfa9-15d44ec826ab]
-azurerm_role_assignment.github_push: Refreshing state... [id=/subscriptions/cf0fbc8c-b1cc-4ccd-8ad9-ecfd099006c8/resourceGroups/rg-vigiavia-prod/providers/Microsoft.ContainerRegistry/registries/acrvigiavia2fplg/providers/Microsoft.Authorization/roleAssignments/b65d22ad-788a-210d-311b-54ec23592692]
+azurerm_user_assigned_identity.github: Refreshing state... [id=/subscriptions/cf0f…/resourceGroups/rg-vigiavia-prod/providers/Microsoft.ManagedIdentity/userAssignedIdentities/id-vigiavia-prod-github]
+azurerm_user_assigned_identity.app: Refreshing state... [id=/subscriptions/cf0f…/resourceGroups/rg-vigiavia-prod/providers/Microsoft.ManagedIdentity/userAssignedIdentities/id-vigiavia-prod-app]
+azurerm_container_registry.acr: Refreshing state... [id=/subscriptions/cf0f…/resourceGroups/rg-vigiavia-prod/providers/Microsoft.ContainerRegistry/registries/acrvigiavia2fplg]
+azurerm_log_analytics_workspace.logs: Refreshing state... [id=/subscriptions/cf0f…/resourceGroups/rg-vigiavia-prod/providers/Microsoft.OperationalInsights/workspaces/log-vigiavia-prod]
+azurerm_federated_identity_credential.github_main: Refreshing state... [id=/subscriptions/cf0f…/resourceGroups/rg-vigiavia-prod/providers/Microsoft.ManagedIdentity/userAssignedIdentities/id-vigiavia-prod-github/federatedIdentityCredentials/github-main]
+azurerm_role_assignment.github_deploy: Refreshing state... [id=/subscriptions/cf0f…/resourceGroups/rg-vigiavia-prod/providers/Microsoft.Authorization/roleAssignments/3464…]
+azurerm_container_app_environment.env: Refreshing state... [id=/subscriptions/cf0f…/resourceGroups/rg-vigiavia-prod/providers/Microsoft.App/managedEnvironments/cae-vigiavia-prod]
+azurerm_role_assignment.app_pull: Refreshing state... [id=/subscriptions/cf0f…/resourceGroups/rg-vigiavia-prod/providers/Microsoft.ContainerRegistry/registries/acrvigiavia2fplg/providers/Microsoft.Authorization/roleAssignments/a25c…]
+azurerm_role_assignment.github_push: Refreshing state... [id=/subscriptions/cf0f…/resourceGroups/rg-vigiavia-prod/providers/Microsoft.ContainerRegistry/registries/acrvigiavia2fplg/providers/Microsoft.Authorization/roleAssignments/b65d…]
 
 Terraform used the selected providers to generate the following execution
 plan. Resource actions are indicated with the following symbols:
@@ -21,7 +21,7 @@ Terraform will perform the following actions:
 
   # azurerm_container_app.app will be created
   + resource "azurerm_container_app" "app" {
-      + container_app_environment_id  = "/subscriptions/cf0fbc8c-b1cc-4ccd-8ad9-ecfd099006c8/resourceGroups/rg-vigiavia-prod/providers/Microsoft.App/managedEnvironments/cae-vigiavia-prod"
+      + container_app_environment_id  = "/subscriptions/cf0f…/resourceGroups/rg-vigiavia-prod/providers/Microsoft.App/managedEnvironments/cae-vigiavia-prod"
       + custom_domain_verification_id = (sensitive value)
       + id                            = (known after apply)
       + latest_revision_fqdn          = (known after apply)
@@ -41,7 +41,7 @@ Terraform will perform the following actions:
 
       + identity {
           + identity_ids = [
-              + "/subscriptions/cf0fbc8c-b1cc-4ccd-8ad9-ecfd099006c8/resourceGroups/rg-vigiavia-prod/providers/Microsoft.ManagedIdentity/userAssignedIdentities/id-vigiavia-prod-app",
+              + "/subscriptions/cf0f…/resourceGroups/rg-vigiavia-prod/providers/Microsoft.ManagedIdentity/userAssignedIdentities/id-vigiavia-prod-app",
             ]
           + principal_id = (known after apply)
           + tenant_id    = (known after apply)
@@ -63,7 +63,7 @@ Terraform will perform the following actions:
         }
 
       + registry {
-          + identity = "/subscriptions/cf0fbc8c-b1cc-4ccd-8ad9-ecfd099006c8/resourceGroups/rg-vigiavia-prod/providers/Microsoft.ManagedIdentity/userAssignedIdentities/id-vigiavia-prod-app"
+          + identity = "/subscriptions/cf0f…/resourceGroups/rg-vigiavia-prod/providers/Microsoft.ManagedIdentity/userAssignedIdentities/id-vigiavia-prod-app"
           + server   = "acrvigiavia2fplg.azurecr.io"
         }
 
@@ -130,8 +130,8 @@ Plan: 1 to add, 0 to change, 0 to destroy.
 Changes to Outputs:
   + container_app                = "ca-vigiavia-prod"
   + fqdn                         = (known after apply)
-  + github_azure_subscription_id = "cf0fbc8c-b1cc-4ccd-8ad9-ecfd099006c8"
-  + github_azure_tenant_id       = "11dbbfe2-89b8-4549-be10-cec364e59551"
+  + github_azure_subscription_id = "cf0f…"
+  + github_azure_tenant_id       = "11db…"
   + url_mvp                      = (known after apply)
 
 Warning: Argument is deprecated

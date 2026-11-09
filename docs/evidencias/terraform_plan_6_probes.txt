@@ -6,7 +6,7 @@ Terraform will perform the following actions:
 
   # azurerm_container_app.app will be updated in-place
   ~ resource "azurerm_container_app" "app" {
-        id                            = "/subscriptions/cf0fbc8c-b1cc-4ccd-8ad9-ecfd099006c8/resourceGroups/rg-vigiavia-prod/providers/Microsoft.App/containerApps/ca-vigiavia-prod"
+        id                            = "/subscriptions/cf0f…/resourceGroups/rg-vigiavia-prod/providers/Microsoft.App/containerApps/ca-vigiavia-prod"
         name                          = "ca-vigiavia-prod"
         tags                          = {
             "ambiente"   = "producao"

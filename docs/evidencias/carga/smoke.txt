@@ -1,0 +1,5 @@
+Revisao                   Imagem                                                                             Saude    Estado
+------------------------  ---------------------------------------------------------------------------------  -------  --------
+***--latest  ***.azurecr.io/vigiavia-mvp:91f82257712cb1de99f06fb4bc9dcc6675a955c6  None     Running
+{"status":"ok","versao":"1.1.0","commit":"91f82257712cb1de99f06fb4bc9dcc6675a955c6","modelo":"vigiavia_buracos","limiar_confianca":0.305}
+MVP no ar com o commit 91f82257712cb1de99f06fb4bc9dcc6675a955c6: https://***.happywave-0bf5b4c3.brazilsouth.azurecontainerapps.io
