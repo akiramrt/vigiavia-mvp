@@ -38,6 +38,7 @@ small { color: var(--suave); flex-basis: 100%; }
 .palco { position: relative; width: 100%; }
 .palco video, .palco canvas { width: 100%; height: auto; display: block; }
 .palco.sobre-video canvas { position: absolute; inset: 0; height: 100%; pointer-events: none; }
+.palco video[hidden] { display: none; }   /* sem isto, o display:block acima vence o hidden e sobra uma faixa preta na foto */
 .vazio { color: #9aa7b3; position: absolute; text-align: center; padding: 20px; }
 .alerta { position: absolute; top: 12px; left: 50%; transform: translateX(-50%); background: var(--perigo); color: #fff; font-weight: 800; font-size: clamp(1rem, 3vw, 1.6rem); padding: 10px 20px; border-radius: 10px; box-shadow: 0 6px 20px #0008; white-space: nowrap; }
 .status { color: var(--suave); min-height: 1.5em; margin: 8px 0 0; }

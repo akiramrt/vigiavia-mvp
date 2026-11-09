@@ -1,9 +1,11 @@
 """Viabilidade do VigiaVia (BI & Startup Development): premissas explícitas, preço, margem, projeção e pedido.
 
 Custo de nuvem: docs/custos.json (Azure Retail Prices API, Brazil South). Câmbio do euro: PTAX do Banco Central.
-Uso: python docs/pitch/viabilidade.py   -> imprime o resumo e grava docs/pitch/viabilidade.json
+Uso: python docs/pitch/viabilidade.py [AAAA-MM-DD]   -> imprime o resumo e grava docs/pitch/viabilidade.json
+     (a data fixa a PTAX do euro; o pitch usa 2026-11-05)
 """
 import json
+import sys
 import urllib.request
 from datetime import date, timedelta
 from pathlib import Path
@@ -12,8 +14,8 @@ RAIZ = Path(__file__).resolve().parents[2]
 
 
 def ptax_euro() -> tuple[float, str]:
-    """PTAX de venda do euro (fechamento) no último dia útil disponível."""
-    dia = date.today()
+    """PTAX de venda do euro (fechamento) no dia pedido na linha de comando (ou hoje) ou no último dia útil anterior."""
+    dia = date.fromisoformat(sys.argv[1]) if len(sys.argv) > 1 else date.today()
     for _ in range(10):
         url = ("https://olinda.bcb.gov.br/olinda/servico/PTAX/versao/v1/odata/CotacaoMoedaDia(moeda=@m,dataCotacao=@d)"
                f"?@m='EUR'&@d='{dia:%m-%d-%Y}'&$format=json")

@@ -6,7 +6,7 @@ Cenários:
   MVP     — 1 réplica (0,5 vCPU / 1 GiB) sempre ligada, ~5% do tempo processando requisições
   Cidade  — 4 réplicas (1 vCPU / 2 GiB), 40% do tempo ativas (ex.: 300 ônibus enviando imagens)
 
-Uso: python scripts/estimar_custo.py [--regiao brazilsouth]
+Uso: python scripts/estimar_custo.py [--regiao brazilsouth] [--data-ptax 2026-11-04]
 """
 from __future__ import annotations
 
@@ -23,11 +23,16 @@ SEG_MES = 730 * 3600
 GRATIS = {"vcpu_s": 180_000, "gib_s": 360_000, "req": 2_000_000}   # cota gratuita mensal do Container Apps
 
 
-def preco(filtro: str, medidor: str) -> float:
+def preco(filtro: str, medidor: str, faixa_paga: bool = False) -> float:
+    """Preço de varejo do medidor. Com faixa_paga, ignora a faixa gratuita (preço 0) de medidores escalonados,
+    como a ingestão do Log Analytics (0–5 GB grátis, depois US$/GB): a franquia é descontada no cálculo do cenário.
+    Até 09/11/2026 o script pegava a faixa gratuita e zerava esse item no cenário Cidade."""
     for tentativa in range(5):
         r = requests.get(API, params={"$filter": filtro}, timeout=30)
         if r.status_code == 200:
             itens = [i for i in r.json()["Items"] if i["meterName"] == medidor and i["type"] == "Consumption"]
+            if faixa_paga:
+                itens = [i for i in itens if i["retailPrice"] > 0] or itens
             if itens:
                 return float(min(itens, key=lambda i: i.get("tierMinimumUnits", 0))["retailPrice"])
             raise SystemExit(f"Medidor não encontrado: {medidor}")
@@ -35,9 +40,10 @@ def preco(filtro: str, medidor: str) -> float:
     raise SystemExit(f"API de preços indisponível para {medidor}")
 
 
-def ptax() -> tuple[float, str]:
+def ptax(ate: date) -> tuple[float, str]:
+    """PTAX de venda do dólar no dia `ate` ou no último dia útil anterior."""
     for d in range(0, 7):
-        dia = date.today() - timedelta(days=d)
+        dia = ate - timedelta(days=d)
         url = ("https://olinda.bcb.gov.br/olinda/servico/PTAX/versao/v1/odata/CotacaoDolarDia(dataCotacao=@d)"
                f"?@d='{dia:%m-%d-%Y}'&$format=json")
         v = requests.get(url, timeout=30).json().get("value", [])
@@ -49,7 +55,10 @@ def ptax() -> tuple[float, str]:
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--regiao", default="brazilsouth")
-    reg = ap.parse_args().regiao
+    ap.add_argument("--data-ptax", type=date.fromisoformat, default=date.today(),
+                    help="dia da cotação (AAAA-MM-DD); o relatório usa 2026-11-04")
+    args = ap.parse_args()
+    reg = args.regiao
     aca = f"serviceName eq 'Azure Container Apps' and armRegionName eq '{reg}'"
     p = {
         "vcpu_ativa": preco(aca, "Standard vCPU Active Usage"),
@@ -58,11 +67,12 @@ def main() -> None:
         "mem_ociosa": preco(aca, "Standard Memory Idle Usage"),
         "req_milhao": preco(aca, "Standard Requests"),
         "acr_dia": preco(f"serviceName eq 'Container Registry' and armRegionName eq '{reg}'", "Basic Registry Unit"),
-        "log_gb": preco(f"serviceName eq 'Log Analytics' and armRegionName eq '{reg}'", "Analytics Logs Data Ingestion"),
+        "log_gb": preco(f"serviceName eq 'Log Analytics' and armRegionName eq '{reg}'", "Analytics Logs Data Ingestion",
+                        faixa_paga=True),
         "blob_gb": preco(f"serviceName eq 'Storage' and armRegionName eq '{reg}' and skuName eq 'Hot LRS'",
                          "Hot LRS Data Stored"),
     }
-    cot, dia = ptax()
+    cot, dia = ptax(args.data_ptax)
 
     def cenario(nome, replicas, vcpu, gib, frac_ativa, req_mes, log_gb):
         ativo_vcpu = replicas * vcpu * SEG_MES * frac_ativa

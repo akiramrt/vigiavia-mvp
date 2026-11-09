@@ -12,12 +12,12 @@
 | 3 · Chega de slide. Vamos à prática. | 1:00 | Demonstração do MVP real (gravação da tela) | 142 |
 | 4 · Quem paga, quem usa e por qual canal | 2:30 | Modelo de negócio | 73 |
 | 5 · Go-to-Market | 2:55 | Go-to-market | 46 |
-| 6 · Unit Economics | 3:15 | Unit economics | 36 |
+| 6 · Unit Economics | 3:15 | Unit economics | 38 |
 | 7 · O que medimos: negócio e impacto | 3:30 | Indicadores e ODS | 58 |
-| 8 · Custa pouco e se paga em 2029 | 3:55 | Viabilidade e pedido | 73 |
+| 8 · Custa pouco e se paga em 2029 | 3:55 | Viabilidade e pedido | 74 |
 | 9 · Cada buraco vira um relato, antes de virar um acidente. | 4:30 | Encerramento | 12 |
 
-Total: 574 palavras ≈ 4min30s (com a demonstração).
+Total: 577 palavras ≈ 4min30s (com a demonstração).
 
 ---
 
@@ -43,7 +43,7 @@ Total: 574 palavras ≈ 4min30s (com a demonstração).
 
 **6 · Unit economics** (a partir de 3:15)
 
-> Em uma subprefeitura típica, com 406 quilômetros, a receita é de 24 mil reais por ano e o custo variável — nuvem, celulares e suporte — fica em 6 mil e 400. Margem bruta de 74%.
+> Em uma subprefeitura típica, com 406 quilômetros, a receita é de 24 mil e 400 reais por ano e o custo variável — nuvem, celulares e suporte — fica em 6 mil e 600. Margem bruta de 73%.
 
 **7 · Indicadores e ODS** (a partir de 3:30)
 
@@ -51,7 +51,7 @@ Total: 574 palavras ≈ 4min30s (com a demonstração).
 
 **8 · Viabilidade e pedido** (a partir de 3:55)
 
-> E é viável: a nuvem custa 86 reais por mês no MVP e cerca de mil para São Paulo inteira. Monitorar a cidade toda renderia 780 mil reais por ano — meio por cento do que ela empenhou em tapa-buraco em 2019 — e o equilíbrio chega em 2029. Nosso pedido: para a prefeitura, um piloto de seis meses na Sé, de 150 mil reais; e para investidores, 300 mil reais de pré-seed.
+> E é viável: a nuvem custa 86 reais por mês no MVP e cerca de 1,4 mil para São Paulo inteira. Monitorar a cidade toda renderia 780 mil reais por ano — meio por cento do que ela empenhou em tapa-buraco em 2019 — e o equilíbrio chega em 2029. Nosso pedido: para a prefeitura, um piloto de seis meses na Sé, de 150 mil reais; e para investidores, 300 mil reais de pré-seed.
 
 **9 · Encerramento** (a partir de 4:30)
 

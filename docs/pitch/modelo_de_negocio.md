@@ -40,17 +40,21 @@ georreferenciado e priorizado por buraco — com privacidade (nenhuma foto intei
 
 | Item | Valor |
 |---|---|
-| Nuvem (Azure, preço oficial) | MVP **R$ 85,53/mês**; SP inteira **R$ 1.039,54/mês** (4 réplicas, 20 mi requisições/mês) |
-| Custo variável por km/ano | nuvem R$ 0,96 + celulares embarcados R$ 7,50 + suporte R$ 7,38 = **R$ 15,84** |
-| **Margem bruta** | **73,6 %** |
+| Nuvem (Azure, preço oficial) | MVP **R$ 85,53/mês**; SP inteira **R$ 1.417,51/mês** (4 réplicas, 20 mi requisições/mês, 20 GB/mês de logs) |
+| Custo variável por km/ano | nuvem R$ 1,31 + celulares embarcados R$ 7,50 + suporte R$ 7,38 = **R$ 16,19** |
+| **Margem bruta** | **73,0 %** |
 | SP inteira (13 mil km) | **R$ 780 mil/ano = 0,54 %** do que a cidade empenhou só em tapa-buraco em 2019 |
-| Ponto de equilíbrio | **~16,3 mil km monitorados** (custo fixo de 2029) — pouco mais que a malha pavimentada de SP |
+| Ponto de equilíbrio | **~16,4 mil km monitorados** (custo fixo de 2029) — pouco mais que a malha pavimentada de SP |
+
+> Revisão de 09/11/2026: o custo de nuvem de “SP inteira” passou de R$ 1.039,54 para R$ 1.417,51/mês, porque o
+> `scripts/estimar_custo.py` usava a faixa gratuita da ingestão do Log Analytics (US$ 0/GB) em vez da faixa paga
+> (US$ 4,60/GB acima de 5 GB). A margem caiu de 73,6 % para 73,0 %; preço, pedido e ano do equilíbrio não mudam.
 
 | Ano | Cenário | km | Receita | Resultado | Caixa acumulado |
 |---|---|---|---|---|---|
-| 2027 | piloto CPSI na Sé (6 meses, R$ 150 mil) + 4 subprefeituras no 2º semestre | 1.625 | R$ 198.750 | −R$ 160.623 | −R$ 160.623 |
-| 2028 | 16 subprefeituras + 3 cidades médias | 9.500 | R$ 570.000 | −R$ 60.520 | −R$ 221.143 |
-| 2029 | SP inteira + 10 cidades médias | 23.000 | R$ 1.380.000 | **+R$ 295.584** | +R$ 74.440 |
+| 2027 | piloto CPSI na Sé (6 meses, R$ 150 mil) + 4 subprefeituras no 2º semestre | 1.625 | R$ 198.750 | −R$ 160.907 | −R$ 160.907 |
+| 2028 | 16 subprefeituras + 3 cidades médias | 9.500 | R$ 570.000 | −R$ 63.834 | −R$ 224.741 |
+| 2029 | SP inteira + 10 cidades médias | 23.000 | R$ 1.380.000 | **+R$ 287.559** | +R$ 62.818 |
 
 ## 5. Indicadores
 
@@ -69,7 +73,7 @@ georreferenciado e priorizado por buraco — com privacidade (nenhuma foto intei
 1. **Parceiro:** piloto de **6 meses na Subprefeitura Sé** via CPSI — **R$ 150 mil** (10 celulares em viaturas da zeladoria,
    ~406 km, integração com a fila de ordens de serviço). Metas: **−30 % de chamados duplicados** e **ordem de serviço em menos de 48 h**
    após a detecção, com precisão confirmada ≥ 80 %.
-2. **Investimento:** **R$ 300 mil** de pré-seed — cobre a necessidade de caixa de R$ 221 mil até o equilíbrio em 2029, com folga.
+2. **Investimento:** **R$ 300 mil** de pré-seed — cobre a necessidade de caixa de R$ 225 mil até o equilíbrio em 2029, com folga.
 
 ## 7. Riscos e respostas
 

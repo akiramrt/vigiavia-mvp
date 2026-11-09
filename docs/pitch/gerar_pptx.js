@@ -113,6 +113,9 @@ const preco = V.premissas.preco_km_ano_brl;
 const kmSub = V.premissas.km_pavimentados_sp / V.premissas.subprefeituras_sp;
 const cv = V.custo_variavel_brl_km_ano;
 const margem = Math.round(V.margem_bruta * 100);
+// valor em reais por extenso para a fala: 6.577 -> "6 mil e 600" (arredondado à centena)
+const milFalado = (v) => { const r = Math.round(v / 100) * 100, mil = Math.floor(r / 1000), resto = r % 1000;
+  return resto ? `${mil} mil e ${resto}` : `${mil} mil`; };
 const proj = V.projecao;
 const anos = Object.keys(proj);
 
@@ -249,7 +252,7 @@ async function montar() {
 
   SLIDES.push({ secao: "Negócio", rotulo: "MODELO DE NEGÓCIO · PREÇO", titulo: "Unit Economics",
     sub: `Exemplo: uma subprefeitura de São Paulo (~${br(Math.round(kmSub))} km de vias)`, tempo: "3:15", bloco: "Unit economics",
-    notas: `Em uma subprefeitura típica, com ${br(Math.round(kmSub))} quilômetros, a receita é de 24 mil reais por ano e o custo variável — nuvem, celulares e suporte — fica em 6 mil e 400. Margem bruta de ${margem}%.`,
+    notas: `Em uma subprefeitura típica, com ${br(Math.round(kmSub))} quilômetros, a receita é de ${milFalado(kmSub * preco)} reais por ano e o custo variável — nuvem, celulares e suporte — fica em ${milFalado(kmSub * cv.total)}. Margem bruta de ${margem}%.`,
     desenhar: (s) => {
       const g = 0.35, w = L3(g), y = 2.2, h = 1.95;
       [[`R$ ${br(kmSub * preco / 1000, 1)} mil`, "receita por ano", `R$ ${preco}/km × ${br(Math.round(kmSub))} km`, "ambar"],
@@ -296,7 +299,7 @@ async function montar() {
 
   SLIDES.push({ secao: "Indicadores e viabilidade", rotulo: "VIABILIDADE E PEDIDO", titulo: "Custa pouco e se paga em 2029",
     sub: "Custos reais de nuvem e projeção a partir do piloto", tempo: "3:55", bloco: "Viabilidade e pedido",
-    notas: `E é viável: a nuvem custa ${br(Math.round(nuvemMvp))} reais por mês no MVP e cerca de mil para São Paulo inteira. Monitorar a cidade toda renderia ${br(V.sp_inteira_brl_ano / 1000)} mil reais por ano — meio por cento do que ela empenhou em tapa-buraco em 2019 — e o equilíbrio chega em 2029. Nosso pedido: para a prefeitura, um piloto de seis meses na Sé, de 150 mil reais; e para investidores, ${br(V.pedido_investimento_brl / 1000)} mil reais de pré-seed.`,
+    notas: `E é viável: a nuvem custa ${br(Math.round(nuvemMvp))} reais por mês no MVP e cerca de ${br(nuvemSp / 1000, 1)} mil para São Paulo inteira. Monitorar a cidade toda renderia ${br(V.sp_inteira_brl_ano / 1000)} mil reais por ano — meio por cento do que ela empenhou em tapa-buraco em 2019 — e o equilíbrio chega em 2029. Nosso pedido: para a prefeitura, um piloto de seis meses na Sé, de 150 mil reais; e para investidores, ${br(V.pedido_investimento_brl / 1000)} mil reais de pré-seed.`,
     desenhar: (s) => {
       grafico(s, pres.charts.BAR, [
         { name: "Receita", labels: anos, values: anos.map((a) => Math.round(proj[a].receita_brl / 1000)) },

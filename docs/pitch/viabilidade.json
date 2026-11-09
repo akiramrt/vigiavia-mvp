@@ -25,48 +25,48 @@
   "referencia_brl_km_ano": 63.47,
   "nuvem_brl_mes": {
     "mvp": 85.53,
-    "sp_inteira": 1039.54
+    "sp_inteira": 1417.51
   },
   "custo_variavel_brl_km_ano": {
-    "nuvem": 0.96,
+    "nuvem": 1.31,
     "dispositivos": 7.5,
     "suporte": 7.38,
-    "total": 15.84
+    "total": 16.19
   },
-  "margem_bruta": 0.736,
+  "margem_bruta": 0.73,
   "preco_subprefeitura_mes_brl": 2031,
   "sp_inteira_brl_ano": 780000.0,
   "sp_inteira_vs_tapa_buraco_2019": 0.0054,
-  "ponto_equilibrio_km_2029": 16306,
+  "ponto_equilibrio_km_2029": 16436,
   "projecao": {
     "2027": {
       "cenario": "piloto CPSI (Sé, 6 meses) + 4 subprefeituras no 2º semestre",
       "km_monitorados": 1625,
       "receita_brl": 198750,
-      "custo_variavel_brl": 23373,
+      "custo_variavel_brl": 23657,
       "custo_fixo_brl": 336000,
-      "resultado_brl": -160623,
-      "caixa_acumulado_brl": -160623
+      "resultado_brl": -160907,
+      "caixa_acumulado_brl": -160907
     },
     "2028": {
       "cenario": "16 subprefeituras de SP + 3 cidades médias",
       "km_monitorados": 9500,
       "receita_brl": 570000,
-      "custo_variavel_brl": 150520,
+      "custo_variavel_brl": 153834,
       "custo_fixo_brl": 480000,
-      "resultado_brl": -60520,
-      "caixa_acumulado_brl": -221143
+      "resultado_brl": -63834,
+      "caixa_acumulado_brl": -224741
     },
     "2029": {
       "cenario": "SP inteira (32 subprefeituras) + 10 cidades médias",
       "km_monitorados": 23000,
       "receita_brl": 1380000,
-      "custo_variavel_brl": 364416,
+      "custo_variavel_brl": 372441,
       "custo_fixo_brl": 720000,
-      "resultado_brl": 295584,
-      "caixa_acumulado_brl": 74440
+      "resultado_brl": 287559,
+      "caixa_acumulado_brl": 62818
     }
   },
-  "necessidade_caixa_brl": 221143,
+  "necessidade_caixa_brl": 224741,
   "pedido_investimento_brl": 300000
 }
